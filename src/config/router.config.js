@@ -322,6 +322,29 @@ export const asyncRouterMap = [
             ]
           }
         ]
+      },
+      // planManagement
+      {
+        path: '/planManagement',
+        name: 'list',
+        component: PageView,
+        redirect: '/planManagement/require/RequireList',
+        meta: { title: '计划管理', icon: 'schedule', permission: [ 'table' ] },
+        children: [
+          {
+            path: '/planManagement/RequireList',
+            name: 'RequireList',
+            hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
+            component: () => import('@/views/planManagement/require/RequireList'),
+            meta: { title: '设备需求管理', keepAlive: true, permission: [ 'table' ] }
+          },
+          {
+            path: '/planManagement/disposalList',
+            name: 'disposalList',
+            component: () => import('@/views/planManagement/disposal/disposalList'),
+            meta: { title: '临时设备需求管理', keepAlive: true, permission: [ 'table' ] }
+          }
+        ]
       }
     ]
   },
