@@ -85,16 +85,15 @@ const vueConfig = {
   },
 
   devServer: {
-    // development server port 8000
-    port: 7000
-    // If you want to turn on the proxy, please remove the mockjs /src/main.jsL11
-    // proxy: {
-    //   '/api': {
-    //     target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
-    //     ws: false,
-    //     changeOrigin: true
-    //   }
-    // }
+    // 端口7000
+    port: 7000,
+    proxy: {
+    '/api': {
+    target: 'https://mock.ihx.me/mock/5baf3052f7da7e07e04a5116/antd-pro',
+    ws: true, 
+    changeOrigin: true //设置为true 本地虚拟一个服务器
+    }
+    }
   },
 
   // disable source map in production

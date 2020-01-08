@@ -44,6 +44,7 @@
       :data="loadData"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
       border
+      :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
     >
       <!-- 表格搜索 -->
       <div
