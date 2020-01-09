@@ -1,7 +1,7 @@
 <template>
   <div>
     <!-- 菜单按钮列表 -->
-    <div class="table-operator" :style="{ 'margin-bottom': advanced ? '24px' : 0 }">
+    <div class="table-operator" :style="{ 'margin-bottom': '24px'}">
       <span v-for="item in menuBtns" :key="item.key">
         <a-dropdown v-if="item.title === '导出'">
           <a-menu slot="overlay">
@@ -39,7 +39,6 @@
     <s-table
       ref="table"
       size="default"
-      :rowKey="(record) => record.data.id"
       :columns="columns"
       :data="loadData"
       :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange }"
@@ -93,7 +92,6 @@
     </s-table>
   </div>
 </template>
-
 <script>
 import { STable, Ellipsis } from '@/components'
 export default {
@@ -178,108 +176,90 @@ export default {
       columns: [ // 表头
         {
           title: '序号',
-          dataIndex: 'no'
+          width: '70px',
+          align: 'center',
+          scopedSlots: { customRender: 'serial' }
         },
         {
           title: '单据编号',
-          dataIndex: 'name',
-          key: '1',
+          dataIndex: 'serial_number',
+          width: '200px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'serial_number'
           },
-          onFilter: (value, record) =>
-            record.name
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          onFilter: (value, record) => record.serial_number.toLowerCase().includes(value.toLowerCase())
         },
         {
           title: '编制人',
-          dataIndex: 'name',
-          key: '2',
+          dataIndex: 'creator_user_name',
+          width: '100px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'creator_user_name'
           },
-          onFilter: (value, record) =>
-            record.name
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          onFilter: (value, record) => record.creator_user_name.toLowerCase().includes(value.toLowerCase())
         },
         {
           title: '编制日期',
-          dataIndex: 'status',
-          key: '3',
+          dataIndex: 'create_date',
+          width: '120px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'create_date'
           },
-          onFilter: (value, record) =>
-            record.name
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
+          onFilter: (value, record) => record.create_date.toLowerCase().includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
             if (visible) {
               setTimeout(() => {
-                this.searchInput.focus()
+                // this.searchInput.focus()
               }, 0)
             }
-          }
+          },
+          sorter: (a, b) => a.create_date.split('-').join('') - b.create_date.split('-').join('')
         },
         {
           title: '备注',
-          dataIndex: 'updatedAt'
+          dataIndex: 'remark',
+          align: 'right',
+          width: '120px',
+          scopedSlots: { customRender: 'remark' }
         },
         {
-          title: '设备需求量',
-          dataIndex: 'updatedAt'
+          title: '设备需求数量',
+          dataIndex: 'number',
+          align: 'right',
+          width: '150px',
+          scopedSlots: { customRender: 'number' }
+          // sorter: (a, b) => a.number.length - b.number.length
         },
         {
           title: '状态',
-          dataIndex: 'updatedAt',
-          filters: [
-            { text: '已保存', value: '已保存' },
-            { text: '已提交', value: '已提交' },
-            { text: '审批中', value: '审批中' },
-            { text: '已退回', value: '已退回' },
-            { text: '审批完成', value: '审批完成' }
-          ]
+          dataIndex: 'dic_enum_name',
+          width: '120px',
+          key: 'status',
+          scopedSlots: {
+            customRender: 'status'
+          },
+          filterMultiple: false,
+          // filters: formStatusArray,
+          // filteredValue: filteredInfo.status || null,
+          onFilter: (value, record) => record.status === value
         },
         {
           title: '审批人',
-          dataIndex: 'updatedAt',
-          key: '4',
+          width: '120px',
+          dataIndex: 'check_user_name',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'approver'
           },
-          onFilter: (value, record) =>
-            record.name
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
+          // onFilter: (value, record) => record.check_user_name.toLowerCase().includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
@@ -289,26 +269,15 @@ export default {
         },
         {
           title: '审批时间',
-          dataIndex: 'updatedAt',
-          sorter: true,
-          key: '5',
+          dataIndex: 'check_at',
+          width: '120px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'check_at'
           },
-          onFilter: (value, record) =>
-            record.name
-              .toString()
-              .toLowerCase()
-              .includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          onFilter: (value, record) => record.check_at.toLowerCase().includes(value.toLowerCase()),
+          sorter: (a, b) => new Date(a.check_at).getTime() - new Date(b.check_at).getTime()
         }
       ],
       // 查询条件参数

@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <table-list></table-list>
+    <list></list>
   </a-card>
 </template>
 
