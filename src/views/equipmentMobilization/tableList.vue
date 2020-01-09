@@ -1,6 +1,6 @@
 <template>
   <a-card>
-    <table-list></table-list>
+    <list></list>
   </a-card>
 </template>
 
@@ -14,17 +14,15 @@ import AInput from 'ant-design-vue/es/input/Input'
 import ATextarea from 'ant-design-vue/es/input/TextArea'
 // 导入组件
 import List from '@/views/planManagement/require/table/List'
-import TableList from '@/views/planManagement/require/table/table'
 import Edit from '@/views/planManagement/require/table/Edit'
 import Read from '@/views/planManagement/require/table/Read'
 import Detail from '@/views/planManagement/require/table/Detail1'
 export default {
-  name: 'RequireList',
+  name: 'TableList',
   components: {
     AInput,
     ATextarea,
     List,
-    TableList,
     Read,
     Edit,
     Detail

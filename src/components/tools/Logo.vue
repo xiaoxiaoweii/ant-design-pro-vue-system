@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import LogoSvg from '@/assets/logo.svg?inline'
+import LogoSvg from '@/business/logo.svg?inline'
 
 export default {
   name: 'Logo',
@@ -18,7 +18,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Ant Design Pro',
+      default: '设备业务管理',
       required: false
     },
     showTitle: {

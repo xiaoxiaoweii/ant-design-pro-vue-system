@@ -4,12 +4,12 @@
       <div class="top">
         <div class="header">
           <a href="/">
-            <img src="~@/assets/logo.svg" class="logo" alt="logo">
+            <img src="~@/business/logo.svg" class="logo" alt="logo">
             <span class="title">Ant Design</span>
           </a>
         </div>
         <div class="desc">
-          Ant Design 是西湖区最具影响力的 Web 设计规范
+          中国铁建是中国乃至全球最具实力、最具规模的特大型综合建设集团之一
         </div>
       </div>
 
@@ -22,7 +22,7 @@
           <a href="_self">条款</a>
         </div>
         <div class="copyright">
-          Copyright &copy; 2018 白鹭学园技术组出品
+          中铁十一局集团有限公司&nbsp;版权所有 &copy; 2020
         </div>
       </div>
     </div>
@@ -65,7 +65,7 @@ export default {
     .container {
       width: 100%;
       min-height: 100%;
-      background: #f0f2f5 url(~@/assets/background.svg) no-repeat 50%;
+      background: #f0f2f5 url(~@/business/background.svg) no-repeat 50%;
       background-size: 100%;
       padding: 110px 0 144px;
       position: relative;

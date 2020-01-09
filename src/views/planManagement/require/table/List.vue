@@ -84,11 +84,11 @@
               v-if="fragment.toLowerCase() === searchText.toLowerCase()"
               :key="i"
               class="highlight"
-            >{{fragment}}</mark>
-            <template v-else>{{fragment}}</template>
+            >{{ fragment }}</mark>
+            <template v-else>{{ fragment }}</template>
           </template>
         </span>
-        <template v-else>{{text}}</template>
+        <template v-else>{ {text}}</template>
       </template>
     </s-table>
   </div>

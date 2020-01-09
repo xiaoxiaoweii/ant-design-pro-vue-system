@@ -336,49 +336,25 @@ export const asyncRouterMap = [
             hideChildrenInMenu: true, // 强制显示 MenuItem 而不是 SubMenu
             component: () => import('@/views/planManagement/require/RequireList'),
             meta: { title: '设备需求管理', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/disposalList',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '临时设备需求管理', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/111',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '材料设施需求计划', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/222',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '路用车需求计划', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/333',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '设备成本责任预算', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/444',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '季度成本资金计划', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/555',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '年度成本资金计划', keepAlive: true, permission: ['table'] }
-          },
-          {
-            path: '/planManagement/666',
-            name: 'disposalList',
-            component: () => import('@/views/planManagement/disposal/disposalList'),
-            meta: { title: '设备租赁申请', keepAlive: true, permission: ['table'] }
           }
+          // {
+          //   path: '/planManagement/disposalList',
+          //   name: 'disposalList',
+          //   component: () => import('@/views/planManagement/disposal/disposalList'),
+          //   meta: { title: '临时设备需求管理', keepAlive: true, permission: ['table'] }
+          // },
+          // {
+          //   path: '/planManagement/configurationList',
+          //   name: 'Configuration',
+          //   component: () => import('@/views/planManagement/Configuration/ConfigurationList'),
+          //   meta: { title: '材料设施需求计划', keepAlive: true, permission: ['table'] }
+          // },
+          // {
+          //   path: '/planManagement/roadvehicleList',
+          //   name: 'RoadvehicleList',
+          //   component: () => import('@/views/planManagement/Roadvehicle/RoadvehicleList'),
+          //   meta: { title: '路用车需求计划', keepAlive: true, permission: ['table'] }
+          // }
         ]
       }
     ]
