@@ -31,7 +31,13 @@
             <a-icon type="down" />
           </a-button>
         </a-dropdown>
-        <a-button v-else class="menu-button" :type="item.type" :icon="item.icon">{{ item.title }}</a-button>
+        <a-button
+          v-else
+          class="menu-button"
+          :type="item.type"
+          :icon="item.icon"
+          @click="item.func"
+        >{{ item.title }}</a-button>
       </span>
     </div>
     <br />
@@ -104,13 +110,14 @@ export default {
     return {
       searchText: '', // 表格搜索框
       searchInput: null, // 表格搜索框
-      menuBtns: [ // 导航菜单按钮
+      menuBtns: [
+        // 导航菜单按钮
         {
           key: 'btn-1',
           icon: 'plus',
           title: '新建',
-          type: 'primary'
-          // func: () => this.handleEdit()
+          type: 'primary',
+          func: () => this.handleEdit()
         },
         {
           key: 'btn-2',
@@ -173,7 +180,8 @@ export default {
           // }
         }
       ],
-      columns: [ // 表头
+      columns: [
+        // 表头
         {
           title: '序号',
           width: '70px',
@@ -212,7 +220,7 @@ export default {
             customRender: 'create_date'
           },
           onFilter: (value, record) => record.create_date.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 // this.searchInput.focus()
@@ -259,7 +267,7 @@ export default {
             customRender: 'approver'
           },
           // onFilter: (value, record) => record.check_user_name.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
