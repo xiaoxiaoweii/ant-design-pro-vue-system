@@ -2,6 +2,7 @@
   <a-card>
     <component
       :is="currentComponet"
+      @onEdit="handleEdit"
     ></component>
     <a-button
       @click="handleEdit"
@@ -42,11 +43,11 @@ export default {
   },
   methods: {
     handleEdit () {
-      this.currentComponet = 'Edit'
+      this.currentComponet = 'Detail'
       console.log('edit')
     },
     handleDetail (record) {
-      this.currentComponet = 'Detail'
+      this.currentComponet = 'Lists'
       console.log('detail')
     }
 
