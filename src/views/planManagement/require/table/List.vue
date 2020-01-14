@@ -155,7 +155,7 @@ export default {
   components: {
     STable,
     Ellipsis
-  },
+  }, 
   computed: {
     fields () {
       const fields = {}
@@ -512,7 +512,8 @@ export default {
             this.$refs.table.clearSelected()
             return
           }
-         this.$router.push({name:'requireEdit',params:this.selectedRows[0]})   
+         this.$router.push({name:'requireEdit',params:this.selectedRows[0]})
+         console.log(this.$router)   
       } else {
         return this.$router.push({ name: 'requireNew' ,params:{type:1}})
       }

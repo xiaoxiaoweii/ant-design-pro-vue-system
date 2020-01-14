@@ -10,22 +10,34 @@ export const asyncRouterMap = [
     meta: { title: '首页' },
     redirect: '/planManagement',
     children: [
-      // dashboard
+      // planManagement
       {
         path: '/planManagement',
         name: 'planManagement',
         redirect: '/planManagement/RequireList',
         component: RouteView,
-        meta: { title: '', keepAlive: true, icon: 'form', permission: [ 'dashboard' ] },
+        meta: { title: '计划管理', keepAlive: true, icon: 'schedule', permission: [ 'dashboard' ] },
         children: [
           {
             path: '/planManagement/RequireList',
             name: 'RequireList',
-            component: () => import('@/views/planManagement/require/1'),
-            meta: { title: '计划管理', keepAlive: false, permission: [ 'dashboard' ] }
-          }
+            component: () => import('@/views/planManagement/require/RequireList'),
+            meta: { title: '设备需求计划', keepAlive: false, permission: [ 'dashboard' ] }
+          },
+          {
+            path: '/planManagement/RequireNew',
+            name: 'RequireNew',
+            component: () => import('@/views/planManagement/require/table/New'),
+            meta: { title: '新增设备需求计划', keepAlive: false, permission: [ 'dashboard' ] }
+          },
+          {
+            path: '/planManagement/RequireEdit',
+            name: 'RequireEdit',
+            component: () => import('@/views/planManagement/require/table/Edit'),
+            meta: { title: '修改需求计划', keepAlive: false, permission: [ 'dashboard' ] }
+          }    
         ]
-      }  
+      }
     ]
   },
   {
@@ -103,6 +115,6 @@ export const constantRouterMap = [
   {
     path: '/404',
     //  component: () => import(/* webpackChunkName: "fail" */ '@/views/user/logout')
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/404')
   }
 ]

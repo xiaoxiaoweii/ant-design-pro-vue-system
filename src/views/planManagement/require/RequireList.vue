@@ -12,7 +12,7 @@
       :recording="record"
       :is="currentComponet"
     ></component>
-  </a-card>
+  </a-card> 
 </template>
 
 <script>
@@ -93,7 +93,6 @@ export default {
         this.$store.state.keepaliveArr.push('/planManagement/requireList')
       }
     }
-
   }
 }
 </script>
