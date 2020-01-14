@@ -30,8 +30,8 @@ const vueConfig = {
               pure_funcs: ['console.log']//移除console
             }
           }
-        })
-      ]
+      })
+    ]
     }
   },
 
@@ -70,10 +70,10 @@ const vueConfig = {
   },
 
   devServer: {
-    port: 8000,
+    port: 7000,
     proxy: {
       '/business': {
-        target: 'http://192.168.40.235:33102',
+        target: 'http://192.168.40.202:33102',
         ws: true,
         changeOrigin: true
       }

@@ -159,6 +159,7 @@ export default {
   computed: {
     fields () {
       const fields = {}
+
       this.columns.forEach(col => {
         if (col.dataIndex === 'operation' || !col.dataIndex) return
         fields[col.title] = col.dataIndex

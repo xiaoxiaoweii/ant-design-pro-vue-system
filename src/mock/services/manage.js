@@ -7,7 +7,7 @@ const serverList = (options) => {
   const parameters = getQueryParameters(options)
 
   const result = []
-  const pageNo = parseInt(parameters.pageNo)
+  const pageNo = parseInt(parameters.pageNum)
   const pageSize = parseInt(parameters.pageSize)
   const totalPage = Math.ceil(totalCount / pageSize)
   const key = (pageNo - 1) * pageSize

@@ -9,8 +9,7 @@ export default {
     })
     // colorPalette变换得到颜色值
     const colorPalettes = generate(color)
-    const rgb = client.varyColor.toNum3(color.replace('#', '')).join(',')
-    return lightens.concat(colorPalettes).concat(rgb)
+    return lightens.concat(colorPalettes)
   },
   changeColor (newColor) {
     var options = {

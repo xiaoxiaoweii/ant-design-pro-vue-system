@@ -28,6 +28,7 @@ import TagSelect from '@/components/TagSelect'
 import ExceptionPage from '@/components/Exception'
 import StandardFormRow from '@/components/StandardFormRow'
 import ArticleListContent from '@/components/ArticleListContent'
+import ZTree from '@/components/zTree'
 
 export {
   AvatarList,
@@ -48,6 +49,8 @@ export {
   FooterToolbar,
   NumberInfo,
   DescriptionList,
+  // 自定义组件
+  ZTree,
   // 兼容写法，请勿继续使用
   DescriptionList as DetailList,
   Tree,

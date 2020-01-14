@@ -7,10 +7,13 @@ const getters = {
   nickname: state => state.user.name,
   welcome: state => state.user.welcome,
   roles: state => state.user.roles,
+  trees: state => state.user.trees,
+  userId: state => state.user.uid,
   userInfo: state => state.user.info,
   addRouters: state => state.permission.addRouters,
-  multiTab: state => state.app.multiTab,
-  lang: state => state.i18n.lang
+  menuKey: state => state.menu_key,
+  routerList: state => state.user.routerList,
+  multiTab: state => state.app.multiTab
 }
 
 export default getters

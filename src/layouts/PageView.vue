@@ -8,7 +8,7 @@
         <p style="font-size: 14px;color: rgba(0,0,0,.65)">{{ description }}</p>
         <div class="link">
           <template v-for="(link, index) in linkList">
-            <a :key="index" @click="() => { link.callback && link.callback() }">
+            <a :key="index" :href="link.href">
               <a-icon :type="link.icon" />
               <span>{{ link.title }}</span>
             </a>
@@ -44,7 +44,7 @@
           <keep-alive v-if="multiTab">
             <router-view ref="content" />
           </keep-alive>
-          <router-view v-else ref="content" />
+          <!-- <router-view ref="content" /> -->
         </slot>
       </div>
     </div>

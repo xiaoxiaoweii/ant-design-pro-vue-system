@@ -1,0 +1,38 @@
+{
+	"responsePageInfo": {
+		"total": 1,
+		"list": [{
+			"multiplying_power": "55",
+			"num": "2018-PM-SBZL-001",
+			"product_org": "镇江天力变压器有限公司",
+			"install_org": "福建永乐电力安装服务有限公司",
+			"source": "租赁",
+			"spec": "S11-M-500/10",
+			"check_result": "符合要求",
+			"contract_num": "C211020260201821510",
+			"check_date": "2018-07-02",
+			"name": "电力变压器",
+			"id": 1,
+			"use_org": "中铁十一局第二工程公司浦梅铁路项目部",
+			"use_site": "建宁大桥"
+		}],
+		"pageNum": 1,
+		"pageSize": 13,
+		"size": 1,
+		"startRow": 1,
+		"endRow": 1,
+		"pages": 1,
+		"prePage": 0,
+		"nextPage": 0,
+		"isFirstPage": true,
+		"isLastPage": true,
+		"hasPreviousPage": false,
+		"hasNextPage": false,
+		"navigatePages": 8,
+		"navigatepageNums": [1],
+		"navigateFirstPage": 1,
+		"navigateLastPage": 1,
+		"firstPage": 1,
+		"lastPage": 1
+	}
+}

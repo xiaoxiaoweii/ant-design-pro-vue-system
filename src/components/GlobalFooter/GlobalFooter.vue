@@ -1,6 +1,6 @@
 <template>
   <div class="footer">
-    <div class="links">
+    <!-- <div class="links">
       <a
         href="https://pro.loacg.com/"
         target="_blank"
@@ -13,10 +13,12 @@
       </a>
       <a href="https://ant.design/">Ant Design</a>
       <a href="https://vue.ant.design/">Vue Antd</a>
-    </div>
+    </div> -->
     <div class="copyright">
-      Copyright
-      <a-icon type="copyright" /> 2018 <span>白鹭学园技术组出品</span>
+      中铁十一局集团有限公司&nbsp;版权所有
+      <a-icon type="copyright" /> 2020 <span> </span>
+      &nbsp;
+      <a href="https://sbywcs.cr11g.com.cn/faq/ " target="_blank">问题提交</a>
     </div>
   </div>
 </template>
@@ -33,7 +35,7 @@ export default {
 <style lang="less" scoped>
 .footer {
   padding: 0 16px;
-  margin: 48px 0 24px;
+  margin: 24px 0 24px;
   text-align: center;
 
   .links {

@@ -1,5 +1,7 @@
 const api = {
-  Login: '/auth/login',
+  login: '/login',
+  testLogin: '/login1',
+  refresh: '/refresh',
   Logout: '/auth/logout',
   ForgePassword: '/auth/forge-password',
   Register: '/auth/register',

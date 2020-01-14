@@ -62,20 +62,26 @@
 <script>
 import { triggerWindowResizeEvent } from '@/utils/util'
 import { mapState, mapActions } from 'vuex'
-import { mixin, mixinDevice } from '@/utils/mixin'
+import { mixin, mixinDevice, mixinEvent } from '@/utils/mixin'
 import config from '@/config/defaultSettings'
 
 import RouteView from './RouteView'
+import MultiTab from '@/components/MultiTab'
 import SideMenu from '@/components/Menu/SideMenu'
 import GlobalHeader from '@/components/GlobalHeader'
 import GlobalFooter from '@/components/GlobalFooter'
 import SettingDrawer from '@/components/SettingDrawer'
 
+
 export default {
   name: 'BasicLayout',
-  mixins: [mixin, mixinDevice],
+  mixins: [mixin, mixinDevice, mixinEvent],
+  events: {
+    'evt.updateMenu': 'updateMenu'
+  },
   components: {
     RouteView,
+    MultiTab,
     SideMenu,
     GlobalHeader,
     GlobalFooter,
@@ -98,7 +104,7 @@ export default {
         return '0'
       }
       if (this.sidebarOpened) {
-        return '256px'
+        return '222px'
       }
       return '80px'
     }
@@ -133,22 +139,30 @@ export default {
     paddingCalc () {
       let left = ''
       if (this.sidebarOpened) {
-        left = this.isDesktop() ? '256px' : '80px'
+        left = this.isDesktop() ? '222px' : '80px'
       } else {
         left = (this.isMobile() && '0') || ((this.fixSidebar && '80px') || '0')
       }
       return left
     },
     menuSelect () {
+      if (!this.isDesktop()) {
+        this.collapsed = false
+      }
     },
     drawerClose () {
       this.collapsed = false
+    },
+    updateMenu () {
+      this.menus = this.mainMenu.find(item => item.path === '/').children
     }
   }
 }
 </script>
 
 <style lang="less">
+@import url('../components/global.less');
+
 /*
  * The following styles are auto-applied to elements with
  * transition="page-transition" when their visibility is toggled

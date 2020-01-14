@@ -1,6 +1,8 @@
 @import './index.less';
 
 body {
+  // 禁用浏览器滚动条
+  // overflow: hidden;
 
   &.colorWeak {
     filter: invert(80%);
@@ -10,9 +12,69 @@ body {
   }
 }
 
+// 状态筛选条件层级权重
+.header {
+  z-index: 999999;
+}
+
+// .ant-dropdown-placement-bottomRight,
+// .ant-dropdown {
+//   z-index: 0!important;
+// }
+
+// 添加内容滚动条
+// .ant-card {
+//   overflow-y: scroll;
+//   height: 600px;
+// }
+.z-tree {
+  overflow-y: scroll;
+  height: 540px;
+}
+.s-table{
+  min-height: 600px;
+}
+// .modal-box .ant-modal-body,
+.modal-box .ant-modal-body .ZTree,
+.modal-box .ant-modal-body .z-tree {
+  overflow-y: scroll;
+  height: 540px;
+}
+td,th{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.liuchen{
+  height: 500px;
+}
+.modal-box .ant-modal-body .s-table{
+  min-height: 600px;
+}
+.modal-box .ant-modal-body .ztree1 {
+  overflow-y: scroll;
+  height: 500px;
+}
+.ant-table-content{
+  overflow: auto;
+}
+.modal-box .ant-modal-body {
+  min-height: 600px;
+}
+.ant-modal-content{
+  width: 70%!important;
+  left: 50%;transform: translateX(-50%);
+}
+// .ant-col-19{
+//   height: 530px!important;
+//   overflow-y: scroll;
+// }
 .layout.ant-layout {
   height: auto;
   overflow-x: hidden;
+  .ant-card {
+    min-height: 90%!important;
+  }
 
   &.mobile,
   &.tablet {
@@ -91,19 +153,7 @@ body {
     &.content-width-Fluid {
       .header-index-wide {
         max-width: unset;
-        .header-index-left {
-          flex: 1 1 1000px;
-          .logo{
-            margin-left: 25px;
-          }
-          .ant-menu.ant-menu-horizontal{
-            max-width: calc(100vw - 190px - 238px - 25px);
-            flex: 1 1 calc(100vw - 190px - 238px - 25px);
-          }
-        }
-        .header-index-right{
-          margin-right:25px;
-        }
+        margin-left: 24px;
       }
 
       .page-header-index-wide {
@@ -122,7 +172,7 @@ body {
       transition: width 0.2s;
 
       &.ant-header-side-opened {
-        width: calc(100% - 256px);
+        width: calc(100% - 222px);
       }
 
       &.ant-header-side-closed {
@@ -133,8 +183,8 @@ body {
 
   .header {
     height: 64px;
-    padding: 0 12px 0 0;
-    background: #fff;
+    padding: 0 36px 0 0;
+    background: #c2ddf4; // #fff;
     box-shadow: 0 1px 4px rgba(0, 21, 41, 0.08);
     position: relative;
   }
@@ -233,7 +283,7 @@ body {
           }
         }
         .ant-menu.ant-menu-horizontal {
-          flex: 1 1 auto;
+          flex: 0 1 auto;
           white-space: normal;
         }
       }
@@ -293,19 +343,12 @@ body {
       }
 
       .header-index-right {
-        flex: 0 0 238px;
-        align-self: flex-end;
+        flex: 1 0 auto;
         height: 64px;
         overflow: hidden;
 
         .content-box {
           float: right;
-          .action {
-            max-width: 140px;
-            overflow: hidden;
-            text-overflow:ellipsis;
-            white-space:nowrap;
-          }
         }
       }
     }
@@ -373,7 +416,7 @@ body {
 .sider {
   box-shadow: 2px 0 6px rgba(0, 21, 41, 0.35);
   position: relative;
-  z-index: @ant-global-sider-zindex;
+  z-index: 10;
   min-height: 100vh;
 
   .ant-layout-sider-children {
@@ -426,7 +469,7 @@ body {
     box-shadow: 2px 0px 8px 0px rgba(29, 35, 41, 0.05);
 
     .logo {
-      background: #fff;
+      background: #c2ddf4; // #fff;
       box-shadow: 1px 1px 0px 0px #e8e8e8;
 
       h1 {
@@ -506,4 +549,24 @@ body {
       margin-right: 8px;
     }
   }
+}
+
+// 上传图片缩列图占满
+.ant-upload-select-picture-card i {
+  font-size: 32px;
+  color: #999;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+  margin-top: 8px;
+  color: #666;
+}
+
+.ant-upload-list-item-info > span {
+  height: 100%;
+}
+
+// 查看后变色
+.read-after {
+  color: #f55858!important;
 }

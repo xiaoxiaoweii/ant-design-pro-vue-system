@@ -1,7 +1,7 @@
 <template>
   <a-layout-sider
     :class="['sider', isDesktop() ? null : 'shadow', theme, fixSiderbar ? 'ant-fixed-sidemenu' : null ]"
-    width="256px"
+    width="222px"
     :collapsible="collapsible"
     v-model="collapsed"
     :trigger="null">
@@ -59,3 +59,14 @@ export default {
   }
 }
 </script>
+<style>
+li.ant-menu-submenu-inline>div.ant-menu-submenu-title{
+  height: 30px!important
+}
+ul.ant-menu-sub>li.ant-menu-item{
+  height: 30px!important;
+}
+ul.ant-menu-sub>li.ant-menu-item a{
+  line-height: 30px!important
+}
+</style>

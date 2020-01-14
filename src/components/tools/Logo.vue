@@ -1,14 +1,15 @@
 <template>
   <div class="logo">
-    <router-link :to="{name:'dashboard'}">
-      <LogoSvg alt="logo" />
-      <h1 v-if="showTitle">{{ title }}</h1>
-    </router-link>
+    <LogoSvg alt="logo" />
+    <h1 v-if="showTitle">{{ title }}</h1>
+    <!-- <router-link :to="{name:'index'}">
+      
+    </router-link> -->
   </div>
 </template>
 
 <script>
-import LogoSvg from '@/assets/logo.svg?inline'
+import LogoSvg from '@/business/logo.svg?inline'
 
 export default {
   name: 'Logo',
@@ -18,7 +19,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: 'Ant Design Pro',
+      default: '设备业务管理',
       required: false
     },
     showTitle: {

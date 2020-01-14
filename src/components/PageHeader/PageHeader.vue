@@ -65,11 +65,12 @@ export default {
 <style lang="less" scoped>
 .page-header {
   background: #fff;
-  padding: 16px 32px 0;
+  // padding: 16px 32px 0;
   border-bottom: 1px solid #e8e8e8;
 
   .breadcrumb {
-    margin-bottom: 16px;
+    display: none;
+    // margin-bottom: 16px;
   }
 
   .detail {
@@ -97,19 +98,19 @@ export default {
         width: 100%;
 
         .avatar {
-          margin-bottom: 16px;
+          // margin-bottom: 16px;
         }
       }
 
       .title {
-        font-size: 20px;
+        font-size: 0;
         font-weight: 500;
 
-        font-size: 20px;
-        line-height: 28px;
+        font-size: 0;
+        line-height: 0;
         font-weight: 500;
         color: rgba(0, 0, 0, 0.85);
-        margin-bottom: 16px;
+        // margin-bottom: 16px;
         flex: auto;
       }
       .logo {

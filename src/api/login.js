@@ -1,5 +1,51 @@
 import api from './index'
 import { axios } from '@/utils/request'
+import { jsonToFormData } from '@/utils/util'
+
+export function login1 (data) {
+  return axios({
+    url: api.testLogin,
+    method: 'post',
+    data: jsonToFormData(data)
+  })
+}
+
+export function login (data) {
+  /**
+   *
+   * @api {POST} /assets/login 1. 用户登录
+   * @apiName 1. 用户登录
+   * @apiGroup AUTH
+   * @apiVersion  1.0.0
+   *
+   *
+   * @apiParam  {String} userId 用户ID
+   *
+   * @apiSuccess (200) {String} msg 文本信息
+   * @apiSuccess (200) {String} status 状态
+   *
+   * @apiParamExample  {form-data} Request-Example:
+   *
+   * {
+   *     userId: 142718
+   * }
+   *
+   *
+   * @apiSuccessExample {json} Success-Response:
+   *
+   * {
+   *     msg: "登录成功"
+   *     status: "0"
+   * }
+   *
+   */
+
+  return axios({
+    url: api.login,
+    method: 'post',
+    data: jsonToFormData(data)
+  })
+}
 
 /**
  * login func
@@ -12,13 +58,13 @@ import { axios } from '@/utils/request'
  * @param parameter
  * @returns {*}
  */
-export function login (parameter) {
-  return axios({
-    url: '/auth/login',
-    method: 'post',
-    data: parameter
-  })
-}
+// export function login (parameter) {
+//   return axios({
+//     url: '/auth/login',
+//     method: 'post',
+//     data: parameter
+//   })
+// }
 
 export function getSmsCaptcha (parameter) {
   return axios({
@@ -28,30 +74,21 @@ export function getSmsCaptcha (parameter) {
   })
 }
 
-export function getInfo () {
+export function getInfo (data) {
   return axios({
-    url: '/user/info',
-    method: 'get',
+    url: api.refresh, // api.login, // '/user/info', // refresh
+    method: 'post', // 'get',
+    data: jsonToFormData(data),
     headers: {
       'Content-Type': 'application/json;charset=UTF-8'
     }
-  })
-}
-
-export function getCurrentUserNav (token) {
-  return axios({
-    url: '/user/nav',
-    method: 'get'
   })
 }
 
 export function logout () {
   return axios({
-    url: '/auth/logout',
-    method: 'post',
-    headers: {
-      'Content-Type': 'application/json;charset=UTF-8'
-    }
+    url: '/logout',
+    method: 'post'
   })
 }
 

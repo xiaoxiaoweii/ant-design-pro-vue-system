@@ -4,7 +4,7 @@
     <a-card class="card" title="需求计划单" :bordered="false">
       <detail-list>
         <detail-list-item term="单据编号">{{ recording.serial_number }}</detail-list-item>
-
+        
         <detail-list-item term="编制人">{{ recording.creator_user_name }}</detail-list-item>
         <detail-list-item term="编制日期">{{ recording.create_date }}</detail-list-item>
         <detail-list-item term="编制单位">{{ recording.pro_unit }}</detail-list-item>
@@ -26,7 +26,7 @@
         :scroll="{x:1800}"
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text,record">
-          <!--  -->
+         <!--  -->
           <a-input-number
             :disabled="recording.type=='read'"
             :key="col"
@@ -52,26 +52,41 @@
       :activeTabKey="activeTabKey"
       @tabChange="(key) => {this.activeTabKey = key}"
     >
-      <div class="attachment" v-if="activeTabKey === 'attach'">
+      <div
+        class="attachment"
+        v-if="activeTabKey === 'attach'"
+      >
         <a-table
           :columns="attachColumns"
           :dataSource="fileList"
           :pagination="false"
           :loading="memberLoading"
         >
-          <span slot="serial" slot-scope="text, record, index">{{ index + 1 }}</span>
-          <template slot="operation" slot-scope="text, record">
+          <span
+            slot="serial"
+            slot-scope="text, record, index"
+          >{{ index + 1 }}</span>
+          <template
+            slot="operation"
+            slot-scope="text, record"
+          >
             <span>
               <a @click="download(record)">
-                <a-icon type="cloud-download" />
-              </a>
+                <a-icon type="cloud-download" /></a>
             </span>
           </template>
         </a-table>
       </div>
       <!-- 审批记录 -->
-      <div class="approval" v-if="activeTabKey === 'approval'">
-        <a-table :columns="approvalColumns" :dataSource="approvalList" :pagination="false" />
+      <div
+        class="approval"
+        v-if="activeTabKey === 'approval'"
+      >
+        <a-table
+          :columns="approvalColumns"
+          :dataSource="approvalList"
+          :pagination="false"
+        />
       </div>
     </a-card>
     <a-card :bordered="false" v-if="recording.type!=='read'" title="审批意见">
@@ -79,9 +94,7 @@
     </a-card>
 
     <!-- fixed footer toolbar -->
-    <footer-tool-bar
-      :style="{ width: isSideMenu() && isDesktop() ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'}"
-    >
+    <footer-tool-bar :style="{ width: isSideMenu() && isDesktop() ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'}">
       <span class="popover-wrapper">
         <a-popover
           title="表单校验信息"
@@ -96,31 +109,40 @@
               @click="scrollToField(item.key)"
               class="antd-pro-pages-forms-style-errorListItem"
             >
-              <a-icon type="cross-circle-o" class="antd-pro-pages-forms-style-errorIcon" />
-              <div class>{{ item.message }}</div>
+              <a-icon
+                type="cross-circle-o"
+                class="antd-pro-pages-forms-style-errorIcon"
+              />
+              <div class="">{{ item.message }}</div>
               <div class="antd-pro-pages-forms-style-errorField">{{ item.fieldLabel }}</div>
             </li>
           </template>
-          <span class="antd-pro-pages-forms-style-errorIcon" v-if="errors.length > 0">
-            <a-icon type="exclamation-circle" />
-            {{ errors.length }}
+          <span
+            class="antd-pro-pages-forms-style-errorIcon"
+            v-if="errors.length > 0"
+          >
+            <a-icon type="exclamation-circle" />{{ errors.length }}
           </span>
         </a-popover>
       </span>
-      <a-button
-        v-if="recording.type!=='read'"
+      <a-button v-if="recording.type!=='read'"
         type="primary"
         @click="refuse"
         :loading="saveLoading"
-      >打回</a-button>&nbsp;
+      >打回</a-button>
+      &nbsp;
       <!--  -->
-      <a-button
-        v-if="recording.type!=='read'"
+      <a-button v-if="recording.type!=='read'"
         type="primary"
         @click="approve"
         :loading="submitLoading"
-      >通过</a-button>&nbsp;
-      <a-button type="primary" @click="handleGoBack" :loading="loading">返回</a-button>
+      >通过</a-button>
+      &nbsp;
+      <a-button 
+        type="primary"
+        @click="handleGoBack"
+        :loading="loading"
+      >返回</a-button>
     </footer-tool-bar>
   </div>
 </template>
@@ -128,16 +150,16 @@
 <script>
 import * as $ from 'jquery'
 import moment from 'moment'
-// import pick from 'lodash.pick'
+import pick from 'lodash.pick'
 import STree from '@/components/Tree/Tree'
 import { STable, ZTree } from '@/components'
 import DetailList from '@/components/tools/DetailList'
 import FooterToolBar from '@/components/FooterToolbar'
 import { mixin, mixinDevice } from '@/utils/mixin'
-import { handlePurchase, submitRequire, queryone, handleApprove, handleRefuse } from '@/api/planManagement/require'
+import { handlePurchase, submitRequire, queryone ,handleApprove,handleRefuse} from '@/api/planManagement/require'
 import {
   uploadUrl,
-  // getAttachments,
+  getAttachments,
   downloadAttachment,
   delAttachment,
   formStatus,
@@ -190,10 +212,10 @@ export default {
   data() {
     return {
       refusebile: this.nickname() !== this.recording.check_user_name,
-      myEquipment_code: '',
-      noted: '',
-      input1: '',
-      input2: '',
+      myEquipment_code:'',
+      noted:'',
+      input1:'',
+      input2:'',
       sizeSum: 0,
       picList: [],
       previewVisible: false,
@@ -240,7 +262,7 @@ export default {
           }
         }
       },
-      approvalList: [],
+      approvalList:[],
       equipList: [],
       tabList: [
         {
@@ -282,7 +304,7 @@ export default {
       selectFields: [],
       inputFields: [],
       datePickerFields: [],
-      numberFields: ['approved_rent_num', 'approved_purchase_num', 'approved_alloc_num'],
+      numberFields: ["approved_rent_num","approved_purchase_num","approved_alloc_num"],
       popconfirmFields: [],
       memberLoading: false,
       loading: false,
@@ -337,7 +359,7 @@ export default {
           key: 'equipment_name',
           align: 'center',
           width: '150px',
-          scopedSlots: { customRender: 'equipment_name' }
+          scopedSlots: { customRender: 'equipment_name' },
         },
         {
           title: '规格型号',
@@ -379,11 +401,11 @@ export default {
           scopedSlots: { customRender: 'estimated_out_date' }
         },
         {
-          title: '使用部位',
-          dataIndex: 'use_site',
-          key: 'use_site',
-          align: 'center',
-          width: '120px',
+          title:'使用部位',
+          dataIndex:'use_site',
+          key:'use_site',
+          align:'center',
+          width:'120px',
           scopedSlots: { customRender: 'use_site' }
         },
         {
@@ -436,7 +458,7 @@ export default {
         'approved_rent_num',
         'approved_purchase_num',
         'approved_alloc_num',
-        'remark'
+        'remark',
       ],
       attachColumns: [
         {
@@ -533,7 +555,7 @@ export default {
       currentSize: Number,
       dicTree: [],
       valTree: '',
-      valTree2: ''
+      valTree2:''
     }
   },
   created() {
@@ -543,6 +565,7 @@ export default {
     })
   },
   computed: {
+   
     mod() {
       return modules.purchase
     },
@@ -556,61 +579,41 @@ export default {
       return formStatus
     }
   },
-
+  
   mounted() {
     this.queryParam = {}
   },
   methods: {
-    approve() {
+    approve () {
       let details = []
-      for (let i in this.detailData) {
-        details.push({})
-        if (
-          this.detailData[i].approved_rent_num === null ||
-          this.detailData[i].approved_rent_num === '' ||
-          this.detailData[i].approved_rent_num === undefined
-        )
-          return this.$notification['warning']({
+      for(let i in this.detailData) {
+         details.push({})
+         if(this.detailData[i].approved_rent_num===null||this.detailData[i].approved_rent_num===''||this.detailData[i].approved_rent_num===undefined) return this.$notification['warning']({
             message: '提示',
             description: '租赁数量必填'
-          })
-
-        if (
-          this.detailData[i].approved_purchase_num === null ||
-          this.detailData[i].approved_purchase_num === '' ||
-          this.detailData[i].approved_purchase_num === undefined
-        )
-          return this.$notification['warning']({
+         })
+         
+         if(this.detailData[i].approved_purchase_num===null||this.detailData[i].approved_purchase_num===''||this.detailData[i].approved_purchase_num===undefined) return this.$notification['warning']({
             message: '提示',
             description: '采购数量必填'
-          })
-        if (
-          this.detailData[i].approved_alloc_num === null ||
-          this.detailData[i].approved_alloc_num === '' ||
-          this.detailData[i].approved_alloc_num === undefined
-        )
-          return this.$notification['warning']({
+         })
+         if(this.detailData[i].approved_alloc_num===null||this.detailData[i].approved_alloc_num===''||this.detailData[i].approved_alloc_num===undefined) return this.$notification['warning']({
             message: '提示',
             description: '调拨数量必填'
-          })
-
-        details[i].approved_alloc_num = this.detailData[i].approved_alloc_num
-        details[i].approved_purchase_num = this.detailData[i].approved_purchase_num
-        details[i].approved_rent_num = this.detailData[i].approved_rent_num
-        details[i].id = this.detailData[i].id
+         })
+         
+         details[i].approved_alloc_num = this.detailData[i].approved_alloc_num
+         details[i].approved_purchase_num = this.detailData[i].approved_purchase_num
+         details[i].approved_rent_num = this.detailData[i].approved_rent_num
+         details[i].id = this.detailData[i].id
       }
-
-      for (let key in this.detailData) {
-        if (
-          this.detailData[key].approved_alloc_num +
-            this.detailData[key].approved_purchase_num +
-            this.detailData[key].approved_rent_num >
-          this.detailData[key].number
-        ) {
-          key = parseInt(key)
+      
+      for(let key in this.detailData) {
+        if((this.detailData[key].approved_alloc_num+this.detailData[key].approved_purchase_num+this.detailData[key].approved_rent_num)>(this.detailData[key].number)) {
+          key=parseInt(key)
           this.$notification['warning']({
-            message: '提示',
-            description: `第${key + 1}行批复数量超过提交数量`
+            message:'提示',
+            description:`第${key+1}行批复数量超过提交数量`
           })
           return
         }
@@ -643,6 +646,7 @@ export default {
     },
 
     refuse () {
+      
       const that = this
       this.$confirm({
         title: '提示',
@@ -668,7 +672,7 @@ export default {
         }
       })
     },
-    handleChange (value, key, column) {
+    handleChange(value, key, column) {
       const newData = [...this.detailData]
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
@@ -676,11 +680,11 @@ export default {
         this.detailData = newData
       }
     },
-    txtChange (e) {
+    txtChange(e) {
       this.noted = e.target.value
     },
     ...mapGetters(['nickname']),
-    async loadEditInfo (data) {
+    async loadEditInfo(data) {
       const { form } = this
       console.log(`将加载 ${data.id} 信息到表单`)
 
@@ -690,23 +694,23 @@ export default {
           this.detailData = res.responseObject.details.map(d => {
             // d.editable = true
             // d.isNew = true
-            if (d.number == 0) d.number = ''
+           if (d.number==0) d.number=''
             d.key = d.id
-            if (d.approved_alloc_num == null) d.approved_alloc_num = 0
-            if (d.approved_purchase_num == null) d.approved_purchase_num = 0
-            if (d.approved_rent_num == null) d.approved_rent_num = 0
+            if(d.approved_alloc_num==null) d.approved_alloc_num = 0
+            if(d.approved_purchase_num==null) d.approved_purchase_num = 0
+            if(d.approved_rent_num==null) d.approved_rent_num = 0
 
             return d
           })
           this.fileList = res.responseObject.files.map(attachment => {
             // if (attachment.type === 0) {
-            attachment.uid = attachment.id.toString()
-            attachment.status = 'done'
-            attachment.url = ''
-            attachment.key = attachment.id.toString()
-            attachment.name = attachment.file_name
-            attachment.size = (attachment.file_size / 1024).toFixed(0)
-            attachment.username = attachment.upload_user_name
+              attachment.uid = attachment.id.toString()
+              attachment.status = 'done'
+              attachment.url = ''
+              attachment.key = attachment.id.toString()
+              attachment.name = attachment.file_name
+              attachment.size = (attachment.file_size/1024).toFixed(0)
+              attachment.username = attachment.upload_user_name
             // }
             return attachment
           })
@@ -795,7 +799,7 @@ export default {
         this.sizeable = false
       }
     },
-
+    
     setFilterColumnScope(data) {
       const { column } = data
       this.customFilterColumn[column.dataIndex] = data
@@ -809,7 +813,7 @@ export default {
       this.valTree2 = e.target.value
       queryAssetsCategory({ assets_type_name: this.valTree2 }).then(res => (this.treeData = res.responseList))
     },
-
+    
     onClick: function(evt, treeId, treeNode) {
       // 点击事件
       console.log(evt.type, treeNode)
@@ -863,14 +867,15 @@ export default {
       }
     },
 
+    
     update: function() {
       // 更新示例数据
       this.showIndex = this.showIndex === 0 ? 1 : 0
     },
-
+   
     handleSaveClose() {},
-
-    refresh(bool) {
+    
+    refresh (bool) {
       this.$refs.table.clearSelected()
       this.$refs.table.refresh(bool)
       this.selectedRowKeys = []
@@ -885,9 +890,9 @@ export default {
       // 清空了过滤内容
       this.filteredInfo = null
     },
-    oncancel() {
+    oncancel () {
       this.input1 = ''
-    },
+      },
     // 提示框
     noSelect(title) {
       const secondsToGo = 2 // 两秒后自动关闭
@@ -909,14 +914,15 @@ export default {
       // getAllEquip().then(res => (this.equipList = res.responseList))
       this.enameVisible = true
     },
-    showModal(selectedRowKeys, col, key, record) {
+    showModal (selectedRowKeys, col, key, record) {
       this.visible = true
-      this.queryparam = {}
+      this.queryparam = {
+      }
       queryAllEquipment().then(res => (this.dicTree = res.responseList))
       console.log(selectedRowKeys)
       this.handleData.col = col
       this.handleData.key = key
-      this.handleData.record = record
+      this.handleData.record = record     
     },
     handleGoBack() {
       this.$emit('onGoBack')
@@ -935,7 +941,9 @@ export default {
     },
 
     handleGetInfo() {},
-
+    
+    
+    
     toggle(key) {
       const target = this.data.filter(item => item.key === key)[0]
       target.editable = !target.editable
@@ -944,6 +952,7 @@ export default {
       const target = this.data.filter(item => item.key === key)[0]
       target.editable = false
     },
+    
 
     // 附件下载
     download(record) {
@@ -954,8 +963,8 @@ export default {
             fileName: record.file_name
           }
         ],
-        type: 0,
-        menu_id: 15
+        type:0,
+        menu_id:15
       }).then(res => {
         res.status ||
           FileSaver.saveAs(new Blob([res], { type: 'application/octet-stream;charset=utf-8' }), record.file_name)
@@ -982,6 +991,7 @@ export default {
       })
     },
 
+   
     scrollToField(fieldKey) {
       const labelNode = document.querySelector(`label[for="${fieldKey}"]`)
       if (labelNode) {
@@ -1023,7 +1033,8 @@ export default {
       })
 
       this.fileList = fileList
-    }
+    },
+
   }
 }
 </script>
@@ -1076,6 +1087,7 @@ export default {
   }
 }
 
+
 /deep/div.ant-col-18 > div.ant-row {
   display: flex;
   flex-direction: row;
@@ -1094,10 +1106,10 @@ export default {
 /deep/ div.ant-col-6 > div.ant-row > div.ant-col-sm-6 {
   width: 80px;
 }
-/deep/ div.ant-col-19 {
-  width: 70%;
+/deep/ div.ant-col-19{
+  width: 70%
 }
-/deep/ div.ant-col-5 {
-  width: 30%;
+/deep/ div.ant-col-5{
+  width: 30%
 }
 </style>

@@ -13,7 +13,6 @@
         @change="handleTabClick"
       >
         <a-tab-pane key="tab1" tab="账号密码登录">
-          <a-alert v-if="isLoginError" type="error" showIcon style="margin-bottom: 24px;" message="账户或密码错误（admin/ant.design )" />
           <a-form-item>
             <a-input
               size="large"
@@ -21,10 +20,10 @@
               placeholder="账户: admin"
               v-decorator="[
                 'username',
-                {rules: [{ required: true, message: '请输入帐户名或邮箱地址' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
+                {rules: [{ required: true, message: '请输入帐户名' }, { validator: handleUsernameOrEmail }], validateTrigger: 'change'}
               ]"
             >
-              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              <a-icon slot="prefix" type="user" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
 
@@ -33,17 +32,17 @@
               size="large"
               type="password"
               autocomplete="false"
-              placeholder="密码: admin or ant.design"
+              placeholder="密码: admin"
               v-decorator="[
                 'password',
                 {rules: [{ required: true, message: '请输入密码' }], validateTrigger: 'blur'}
               ]"
             >
-              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }"/>
+              <a-icon slot="prefix" type="lock" :style="{ color: 'rgba(0,0,0,.25)' }" />
             </a-input>
           </a-form-item>
         </a-tab-pane>
-        <a-tab-pane key="tab2" tab="手机号登录">
+        <!-- <a-tab-pane key="tab2" tab="手机号登录">
           <a-form-item>
             <a-input size="large" type="text" placeholder="手机号" v-decorator="['mobile', {rules: [{ required: true, pattern: /^1[34578]\d{9}$/, message: '请输入正确的手机号' }], validateTrigger: 'change'}]">
               <a-icon slot="prefix" type="mobile" :style="{ color: 'rgba(0,0,0,.25)' }"/>
@@ -68,17 +67,17 @@
               ></a-button>
             </a-col>
           </a-row>
-        </a-tab-pane>
+        </a-tab-pane>-->
       </a-tabs>
 
-      <a-form-item>
-        <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox>
-        <router-link
+      <!-- <a-form-item> -->
+      <!-- <a-checkbox v-decorator="['rememberMe']">自动登录</a-checkbox> -->
+      <!-- <router-link
           :to="{ name: 'recover', params: { user: 'aaa'} }"
           class="forge-password"
           style="float: right;"
-        >忘记密码</router-link>
-      </a-form-item>
+      >忘记密码</router-link>-->
+      <!-- </a-form-item> -->
 
       <a-form-item style="margin-top:24px">
         <a-button
@@ -91,7 +90,7 @@
         >确定</a-button>
       </a-form-item>
 
-      <div class="user-login-other">
+      <!-- <div class="user-login-other">
         <span>其他登录方式</span>
         <a>
           <a-icon class="item-icon" type="alipay-circle"></a-icon>
@@ -103,7 +102,7 @@
           <a-icon class="item-icon" type="weibo-circle"></a-icon>
         </a>
         <router-link class="register" :to="{ name: 'register' }">注册账户</router-link>
-      </div>
+      </div>-->
     </a-form>
 
     <two-step-captcha
@@ -122,6 +121,15 @@ import { mapActions } from 'vuex'
 import { timeFix } from '@/utils/util'
 import { getSmsCaptcha, get2step } from '@/api/login'
 
+document.addEventListener('UniAppJSBridgeReady', function () {
+  console.log(document.querySelector('.main'), 'unicappaaaaaaaaaaaaa啊啊啊啊')
+  document.querySelector('.login-button').addEventListener('click', function () {
+    console.log('uniapp 业务系统')
+    uni.switchTab({
+      url: '/pages/index/index'
+    });
+  });
+});
 export default {
   components: {
     TwoStepCaptcha
@@ -132,7 +140,6 @@ export default {
       loginBtn: false,
       // login type: 0 email, 1 username, 2 telephone
       loginType: 0,
-      isLoginError: false,
       requiredTwoStepCaptcha: false,
       stepCaptchaVisible: false,
       form: this.$form.createForm(this),
@@ -145,18 +152,30 @@ export default {
       }
     }
   },
-  created () {
-    get2step({ })
-      .then(res => {
-        this.requiredTwoStepCaptcha = res.result.stepCode
-      })
-      .catch(() => {
-        this.requiredTwoStepCaptcha = false
-      })
+  mounted () {
+    localStorage.clear()
+
+    // get2step({ })
+    //   .then(res => {
+    //     this.requiredTwoStepCaptcha = res.result.stepCode
+    //   })
+    //   .catch(() => {
+    //     this.requiredTwoStepCaptcha = false
+    //   })
     // this.requiredTwoStepCaptcha = true
+    console.log('login')
+    // const arr = window.location.href.split('?')
+    // const loginParams = arr[1].split('=')
+    // if (arr[1].indexOf('code') !== -1) {
+    //   console.log(1234567)
+    //   console.log('/pages/index/index?code=' + loginParams[1])
+    //   uni.switchTab({
+    //     url: '/pages/index/index?code=' + loginParams[1]
+    //   })
+    // }
   },
   methods: {
-    ...mapActions(['Login', 'Logout']),
+    ...mapActions(['Login1', 'Logout']),
     // handler
     handleUsernameOrEmail (rule, value, callback) {
       const { state } = this
@@ -178,7 +197,7 @@ export default {
         form: { validateFields },
         state,
         customActiveKey,
-        Login
+        Login1
       } = this
 
       state.loginBtn = true
@@ -192,7 +211,8 @@ export default {
           delete loginParams.username
           loginParams[!state.loginType ? 'email' : 'username'] = values.username
           loginParams.password = md5(values.password)
-          Login(loginParams)
+          loginParams.userId = values.username
+          Login1(loginParams)
             .then((res) => this.loginSuccess(res))
             .catch(err => this.requestFailed(err))
             .finally(() => {
@@ -250,18 +270,7 @@ export default {
     },
     loginSuccess (res) {
       console.log(res)
-      // check res.homePage define, set $router.push name res.homePage
-      // Why not enter onComplete
-      /*
-      this.$router.push({ name: 'analysis' }, () => {
-        console.log('onComplete')
-        this.$notification.success({
-          message: '欢迎',
-          description: `${timeFix()}，欢迎回来`
-        })
-      })
-      */
-      this.$router.push({ path: '/' })
+      this.$router.push({ name: 'index' })
       // 延迟 1 秒显示欢迎信息
       setTimeout(() => {
         this.$notification.success({
@@ -269,13 +278,12 @@ export default {
           description: `${timeFix()}，欢迎回来`
         })
       }, 1000)
-      this.isLoginError = false
     },
     requestFailed (err) {
-      this.isLoginError = true
+      console.log(err)
       this.$notification['error']({
         message: '错误',
-        description: ((err.response || {}).data || {}).message || '请求出现错误，请稍后再试',
+        description: ((err.response || {}).data || {}).message || '登录失败，请稍后再试或联系管理员',
         duration: 4
       })
     }

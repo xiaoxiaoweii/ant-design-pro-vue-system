@@ -4,7 +4,7 @@
     :bodyStyle="currentComponet === 'Edit' ? bodyStyle : {}"
   >
     <component
-      v-if="isRouterAlive"
+    v-if="isRouterAlive"
       @onEdit="handleEdit"
       @onGoBack="handleGoBack"
       @onDetail="handleDetail"
@@ -36,7 +36,7 @@ export default {
   },
   data () {
     return {
-      isRouterAlive: true,
+      isRouterAlive:true,
       currentComponet: 'List',
       record: '',
       bodyStyle: {
@@ -56,7 +56,7 @@ export default {
   methods: {
     reload() {
       this.isRouterAlive = false
-      this.$nextTick(function () {
+      this.$nextTick(function() {
         this.isRouterAlive = true
       })
     },
@@ -81,11 +81,11 @@ export default {
     }
   },
   watch: {
-    '$store.state.isreload' () {
+    '$store.state.isreload'() {
       if (true) {
-        this.reload()}
+       this.reload()}
     },
-    $route (to, from) {
+    $route(to, from) {
       if (to.path === '/planManagement/requireList') {
         if (!this.$store.state.keepaliveArr.includes('/planManagement/requireList')) {
           this.reload()

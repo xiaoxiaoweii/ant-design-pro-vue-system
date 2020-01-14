@@ -1,0 +1,57 @@
+#当Runner通过轮询检测到gitlab上有任务时，就会执行这个文件
+
+#stages:
+#   - update
+#   - test
+#   - build
+
+#更新代码并且安装依赖
+#update:     
+#   stage: update
+#   script:
+      #先进入到项目目录下，下面同理
+#      - cd /equipmentassets-front
+#      - git pull
+#     - sudo npm install
+#   tags:                       #这里的tags一定要属于注册时填的tags中，下面同理
+#      - equipmentAssetsFront
+
+#执行单元测试
+#test:
+#   stage: test
+#   script:
+#      - cd /equipmentassets-front 
+#      - npm run test:unit
+#   tags:
+#      - equipmentAssetsFront
+
+#打包
+#build:
+#    stage: build
+#    script:
+#      - cd /equipmentassets-front
+#      - npm run build
+#    tags: 
+#      - equipmentAssetsFront	  
+
+
+
+stages:
+  - build
+
+cache:
+  key: ${CI_BUILD_REF_NAME}
+  paths:
+    - node_modules/
+
+
+build:
+  stage: build
+  only:
+    - tags
+  script:
+    - echo "build ..."
+    - sh build.sh
+    - echo "build done."
+  tags: 
+    - equipmentBusinessFront

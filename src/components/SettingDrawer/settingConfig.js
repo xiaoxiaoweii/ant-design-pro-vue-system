@@ -34,9 +34,7 @@ const colorList = [
 const updateTheme = newPrimaryColor => {
   const hideMessage = message.loading('正在切换主题！', 0)
   themeColor.changeColor(newPrimaryColor).finally(t => {
-    setTimeout(() => {
-      hideMessage()
-    })
+    hideMessage()
   })
 }
 

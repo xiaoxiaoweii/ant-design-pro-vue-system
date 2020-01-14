@@ -45,23 +45,27 @@ export function handleScrollHeader (callback) {
   )
 }
 
-export function isIE () {
-  const bw = window.navigator.userAgent
-  const compare = (s) => bw.indexOf(s) >= 0
-  const ie11 = (() => 'ActiveXObject' in window)()
-  return compare('MSIE') || ie11
-}
-
 /**
  * Remove loading animate
  * @param id parent element id or class
  * @param timeout
  */
-export function removeLoadingAnimate (id = '', timeout = 1500) {
+export function removeLoadingAnimate (id = '', timeout = -3000) {
   if (id === '') {
     return
   }
   setTimeout(() => {
     document.body.removeChild(document.getElementById(id))
   }, timeout)
+}
+
+export function jsonToFormData (json) {
+  const form = new FormData()
+  const keys = Object.keys(json)
+
+  keys.forEach(key => {
+    form.append(key, typeof json[key] === 'object' ? JSON.stringify(json[key]) : json[key])
+  })
+
+  return form
 }

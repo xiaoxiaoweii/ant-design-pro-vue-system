@@ -51,7 +51,7 @@ const orgTree = () => {
     }]
   }, {
     'key': 'key-02',
-    'title': '财务部',
+    'title': this.$store.state.org_name,
     'icon': 'dollar',
     'children': [{
       'key': 'key-02-01',
@@ -961,7 +961,7 @@ const permissions = () => {
       ]
     }
     ],
-    'pageSize': 10,
+    'pageSize': 15,
     'pageNo': 0,
     'totalPage': 1,
     'totalCount': 5
@@ -971,4 +971,4 @@ const permissions = () => {
 Mock.mock(/\/org\/tree/, 'get', orgTree)
 Mock.mock(/\/role/, 'get', role)
 Mock.mock(/\/permission\/no-pager/, 'get', permissionNoPager)
-Mock.mock(/\/permission/, 'get', permissions)
+Mock.mock(/\/permission$/, 'get', permissions)

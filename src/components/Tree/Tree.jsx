@@ -1,4 +1,10 @@
 import { Menu, Icon, Input } from 'ant-design-vue'
+import { purchase } from '@/core/icons'
+
+// 自定义icon图标
+const icons = {
+  'purchase': purchase
+}
 
 const { Item, ItemGroup, SubMenu } = Menu
 const { Search } = Input
@@ -24,39 +30,56 @@ export default {
   },
   data () {
     return {
-      localOpenKeys: []
+      localOpenKeys: [],
+      searchText: ''
     }
   },
   methods: {
     handlePlus (item) {
       this.$emit('add', item)
     },
-    handleTitleClick (...args) {
-      this.$emit('titleClick', { args })
+    handleSelect (item) {
+      this.$emit('select', item)
+    },
+    onChange (e) {
+      const value = e.target.value
+      this.searchText = value
+    },
+    handleTitleClick (item) {
+      this.$emit('titleClick', item)
     },
 
     renderSearch () {
       return (
         <Search
-          placeholder="input search text"
+          placeholder="输入关键字"
           style="width: 100%; margin-bottom: 1rem"
+          {...{ on: { change: (e) => this.onChange(e) } }}
         />
       )
     },
     renderIcon (icon) {
-      return icon && (<Icon type={icon} />) || null
+      if (icon === 'none' || icon === undefined || !icon) {
+        return null
+      }
+      const props = {}
+      // typeof (icon) === 'object' ? props.component = icon : props.type = icon
+      icons[icon] ? props.component = icons[icon] : props.type = icon
+      return (
+        <Icon {... { props } }/>
+      )
     },
     renderMenuItem (item) {
       return (
-        <Item key={item.key}>
+        <Item key={item.key} {...{ on: { click: () => this.handleSelect(item) } }}>
           { this.renderIcon(item.icon) }
           { item.title }
-          <a class="btn" style="width: 20px;z-index:1300" {...{ on: { click: () => this.handlePlus(item) } }}><a-icon type="plus"/></a>
+          { !item.hidden ? <a class="btn" style="width: 20px;z-index:1300" {...{ on: { click: () => this.handlePlus(item) } }}><a-icon type="plus"/></a> : null }
         </Item>
       )
     },
     renderItem (item) {
-      return item.children ? this.renderSubItem(item, item.key) : this.renderMenuItem(item, item.key)
+      return (item.children && item.children.length) ? this.renderSubItem(item, item.key) : this.renderMenuItem(item, item.key)
     },
     renderItemGroup (item) {
       const childrenItems = item.children.map(o => {
@@ -97,7 +120,7 @@ export default {
       }
       // titleClick={this.handleTitleClick(item)}
       return (
-        <SubMenu key={key}>
+        <SubMenu key={key} {...{ on: { titleClick: () => this.handleTitleClick(item) } }}>
           { title }
           { childrenItems }
         </SubMenu>
@@ -109,7 +132,9 @@ export default {
 
     // this.localOpenKeys = openKeys.slice(0)
     const list = dataSource.map(item => {
-      return this.renderItem(item)
+      const newItem = JSON.parse(JSON.stringify(item))
+      newItem.children = newItem.children.filter(d => d.title.includes(this.searchText))
+      return this.renderItem(newItem)
     })
 
     return (
