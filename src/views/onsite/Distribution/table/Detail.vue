@@ -246,7 +246,7 @@ export default {
           scopedSlots: { customRender: 'spec' }
         },
         {
-          title: '单价(元)',
+          title: '含税单价',
           dataIndex: 'single_price',
           key: 'single_price',
           align: 'right',
@@ -270,7 +270,7 @@ export default {
           scopedSlots: { customRender: 'num' }
         },
         {
-          title: '总价(元)',
+          title: '含税总额',
           dataIndex: 'sum',
           key: 'sum',
           width: '60px',
@@ -301,13 +301,6 @@ export default {
           align: 'center',
           scopedSlots: { customRender: 'deduct' }
         },
-        {
-          title: '操作',
-          key: 'action',
-          width: '80px',
-          align: 'center',
-          scopedSlots: { customRender: 'operation' }
-        }
       ],        
       tabList: [
         {

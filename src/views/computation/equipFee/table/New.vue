@@ -183,7 +183,7 @@
           slot-scope="text, record, index"
         >{{ index + 1 + (current - 1) * currentSize }}</span>
         <span slot="supType" slot-scope="text">{{ text }}</span>
-       <ellipsis slot="supName" slot-scope="text" :length="20" tooltip>
+       <ellipsis slot="supName" slot-scope="text" :length="40" tooltip>
         {{ text }}
       </ellipsis>
       </s-table>
@@ -212,7 +212,7 @@
             :key="col"
             :maxlength="1024"
             v-if="record.editable && inputFields.includes(col)"
-            style="margin: -5px 0"
+            style="margin: -5px 0;width: 150px"
             :value="text" 
             :placeholder="columns[i].title"    
             @change="e => handleChange(e.target.value, record.key, col)"      
@@ -526,7 +526,7 @@ export default {
           title: '备注',
           dataIndex: 'remark',
           key: 'remark',
-          width: '200px',
+          width: '140px',
           align: 'center',
           scopedSlots: { customRender: 'remark' }
         }
@@ -646,7 +646,7 @@ export default {
         {
           title: '分包商名称',
           dataIndex: 'supName',
-          width: '150px',
+          width: '200px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -666,8 +666,6 @@ export default {
           dataIndex: 'legalPersonName',
           width: '100px',
           scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
             customRender: 'legalPersonName'
           }
         },
@@ -973,7 +971,7 @@ export default {
           if (isNaN(target.deduction_amount)) {
               target.deduction_amount = ''
           } else {
-              target.deduction_amount = target.quantity *target.price
+              target.deduction_amount = (target.quantity *target.price).toFixed(2)
           }
         }
 

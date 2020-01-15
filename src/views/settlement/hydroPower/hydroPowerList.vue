@@ -47,7 +47,7 @@ export default {
     // 刷新路由方法
     reload () {
       this.isRouterAlive = false
-      this.$nextTick(function () {
+      this.$nextTick(() => {
         this.isRouterAlive = true
       })
     },

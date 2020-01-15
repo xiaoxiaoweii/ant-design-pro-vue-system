@@ -6,13 +6,7 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="单据编号" v-bind="formItemLayout">
-              <a-input
-                disabled
-                placeholder="自动生成"
-                v-decorator="[
-                  'serial_number'
-                ]"
-              />
+              <a-input disabled placeholder="自动生成" v-decorator="['serial_number']" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -37,7 +31,7 @@
                 v-decorator="[
                   'creator_user_name',
                   {
-                    initialValue: nickname(),
+                    initialValue: nickname()
                   }
                 ]"
               />
@@ -47,14 +41,7 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="编制日期" v-bind="formItemLayout">
-              <a-date-picker
-                style="width: 100%"
-                disabled
-                v-decorator="[
-                  'create_date',
-                  { initialValue: date }
-                ]"
-              />
+              <a-date-picker style="width: 100%" disabled v-decorator="['create_date', { initialValue: date }]" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -62,10 +49,7 @@
               <a-input
                 disabled
                 placeholder="验收单位"
-                v-decorator="[
-                  'check_org',
-                  { initialValue: $store.state.pro_unit }
-                ]"
+                v-decorator="['check_org', { initialValue: $store.state.pro_unit }]"
               />
             </a-form-item>
           </a-col>
@@ -88,24 +72,12 @@
         <a-row :gutter="16">
           <a-col :span="8">
             <a-form-item label="安装单位" v-bind="formItemLayout">
-              <a-input
-                disabled
-                placeholder="选择合同编号带入"
-                v-decorator="[
-                  'install_org',
-                ]"
-              />
+              <a-input disabled placeholder="选择合同编号带入" v-decorator="['install_org']" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
             <a-form-item disabled label="含税金额" v-bind="formItemLayout">
-              <a-input
-                disabled
-                placeholder="选择合同编号带入"
-                v-decorator="[
-                  'fee_with_tax',
-                ]"
-              />
+              <a-input disabled placeholder="选择合同编号带入" v-decorator="['fee_with_tax']" />
             </a-form-item>
           </a-col>
           <a-col :span="8">
@@ -187,8 +159,13 @@
         :columns="contract_data"
         :data="loadTable"
         :alert="false"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
-        :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
+        :pagination="{
+          showSizeChanger: true,
+          pageSizeOptions: ['13', '26', '39'],
+          showQuickJumper: true,
+          showTotal: total => `共 ${total} 条`
+        }"
       >
         <div
           slot="filterDropdown"
@@ -211,7 +188,7 @@
           />
           <a-input
             ref="input"
-            v-ant-ref="c => searchInput = c"
+            v-ant-ref="c => (searchInput = c)"
             :placeholder="`${column.title}`"
             :value="selectedKeys[0]"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -223,13 +200,14 @@
             @click="() => handleNameSearch(selectedKeys, confirm, column.dataIndex)"
             icon="search"
             size="small"
-            :style="`width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'contract_sign_date'  ? 15 : 0}px`"
-          >查询</a-button>
-          <a-button
-            @click="() => handleNameReset(clearFilters, column.dataIndex)"
-            size="small"
-            style="width: 90px"
-          >重置</a-button>
+            :style="
+              `width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'contract_sign_date' ? 15 : 0}px`
+            "
+            >查询</a-button
+          >
+          <a-button @click="() => handleNameReset(clearFilters, column.dataIndex)" size="small" style="width: 90px"
+            >重置</a-button
+          >
         </div>
         <a-icon
           slot="filterIcon"
@@ -237,10 +215,7 @@
           type="search"
           :style="{ color: filtered ? '#108ee9' : undefined }"
         />
-        <span
-          slot="serial"
-          slot-scope="text, record, index"
-        >{{ index + 1 + (current - 1) * currentSize }}</span>
+        <span slot="serial" slot-scope="text, record, index">{{ index + 1 + (current - 1) * currentSize }}</span>
         <span slot="is_valid" slot-scope="text">{{ text | valid }}</span>
       </s-table>
     </a-modal>
@@ -265,8 +240,13 @@
         :columns="user_data"
         :data="loadUser"
         :alert="false"
-        :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
-        :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
+        :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
+        :pagination="{
+          showSizeChanger: true,
+          pageSizeOptions: ['13', '26', '39'],
+          showQuickJumper: true,
+          showTotal: total => `共 ${total} 条`
+        }"
       >
         <div
           slot="filterDropdown"
@@ -289,7 +269,7 @@
           />
           <a-input
             ref="input"
-            v-ant-ref="c => searchInput = c"
+            v-ant-ref="c => (searchInput = c)"
             :placeholder="`${column.title}`"
             :value="selectedKeys[0]"
             @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -301,13 +281,14 @@
             @click="() => handleNameSearch(selectedKeys, confirm, column.dataIndex)"
             icon="search"
             size="small"
-            :style="`width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'contract_sign_date'  ? 15 : 0}px`"
-          >查询</a-button>
-          <a-button
-            @click="() => handleNameReset(clearFilters, column.dataIndex)"
-            size="small"
-            style="width: 90px"
-          >重置</a-button>
+            :style="
+              `width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'contract_sign_date' ? 15 : 0}px`
+            "
+            >查询</a-button
+          >
+          <a-button @click="() => handleNameReset(clearFilters, column.dataIndex)" size="small" style="width: 90px"
+            >重置</a-button
+          >
         </div>
         <a-icon
           slot="filterIcon"
@@ -315,10 +296,7 @@
           type="search"
           :style="{ color: filtered ? '#108ee9' : undefined }"
         />
-        <span
-          slot="serial"
-          slot-scope="text, record, index"
-        >{{ index + 1 + (current - 1) * currentSize }}</span>
+        <span slot="serial" slot-scope="text, record, index">{{ index + 1 + (current - 1) * currentSize }}</span>
         <span slot="is_valid" slot-scope="text">{{ text | valid }}</span>
       </s-table>
     </a-modal>
@@ -357,32 +335,35 @@
             <a-input
               read-only
               :key="col"
+              :class="'h' + col + record.code"
               :maxlength="128"
               v-if="record.editable && inputFields.includes(col) && col === 'use_org'"
               style="margin: -5px 0"
               :value="text"
               @click="showSub(record)"
-              :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+              :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               @change="e => handleChange2(e.target.value, record, col)"
             />
             <a-input
               read-only
               :key="col"
+              :class="'h' + col + record.code"
               :maxlength="128"
               v-else-if="record.editable && inputFields.includes(col) && col === 'use_site'"
               style="margin: -5px 0"
               :value="text"
               @click="showWbs(record)"
-              :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+              :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               @change="e => handleChange2(e.target.value, record, col)"
             />
             <a-input
               :key="col"
+              :class="'h' + col + record.code"
               :maxlength="128"
               v-else-if="record.editable && inputFields.includes(col)"
               style="margin: -5px 0"
               :value="text"
-              :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+              :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               @change="e => handleChange2(e.target.value, record, col)"
             />
             <a-select
@@ -393,13 +374,13 @@
               :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               @change="value => handleChange2(value, record, col)"
             >
-              <a-select-option
-                v-for="item in selectData[col]"
-                :key="item.dic_enum_name"
-              >{{ item.dic_enum_name }}</a-select-option>
+              <a-select-option v-for="item in selectData[col]" :key="item.dic_enum_name">{{
+                item.dic_enum_name
+              }}</a-select-option>
             </a-select>
             <a-date-picker
               :key="col"
+              :class="'h' + col + record.code"
               :value="text"
               :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               v-else-if="record.editable && datePickerFields.includes(col)"
@@ -407,17 +388,24 @@
             />
             <a-input-number
               :key="col"
-              :max="col === 'electric_meter_number' ? 9999999999999999999.9999 : 999999999"
+              :max="'h' + col === 'electric_meter_number' ? 9999999999999999999.9999 : 999999999"
               :value="text"
               :min="0"
-              :placeholder="col === 'electric_meter_number' || col === 'water_meter_number' ? '根据右侧添加水电表数据生成' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+              :class="col + record.code"
+              :placeholder="
+                col === 'electric_meter_number' || col === 'water_meter_number'
+                  ? '根据右侧添加水电表数据生成'
+                  : ipValue === '水力'
+                  ? columnsTitle2[col]
+                  : columnsTitle1[col]
+              "
               :step="col === 'initial_number' ? 0.0001 : 1"
               v-else-if="record.editable && numberFields.includes(col)"
               @change="value => handleChange2(value, record, col)"
             />
-            <template
-              v-else
-            >{{ selectFields.includes(col) ? (selectData[col].filter(c => c.dic_enum_name === text))[0].dic_enum_name : text }}</template>
+            <template v-else>{{
+              selectFields.includes(col) ? selectData[col].filter(c => c.dic_enum_name === text)[0].dic_enum_name : text
+            }}</template>
           </template>
 
           <template slot="operation" slot-scope="text, record">
@@ -435,32 +423,35 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
-            v-if="record.editable && inputFields.includes(col)  && col !== 'use_site'"
+            v-if="record.editable && inputFields.includes(col) && col !== 'use_site'"
             :maxlength="128"
             style="margin: -5px 0"
+            :class="col + record.code"
             :value="text"
-            :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+            :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             @change="e => handleChange(e.target.value, record.key, col)"
           />
           <a-input
             read-only
+            :class="col + record.code"
             :key="col"
             v-else-if="record.editable && popFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
             @click="showModal(record.key)"
-            :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+            :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             @change="e => handleChange(e.target.value, record.key, col)"
           />
           <a-input
             read-only
             :key="col"
+            :class="col + record.code"
             :maxlength="128"
             v-else-if="record.editable && inputFields.includes(col) && col === 'use_site'"
             style="margin: -5px 0"
             :value="text"
             @click="showWbsF(record)"
-            :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+            :placeholder="col === 'remark' ? '备注' : ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             @change="e => handleChange2(e.target.value, record, col)"
           />
           <a-select
@@ -471,14 +462,14 @@
             :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             @change="value => handleChange(value, record.key, col)"
           >
-            <a-select-option
-              v-for="item in selectData[col]"
-              :key="item.dic_enum_name"
-            >{{ item.dic_enum_name }}</a-select-option>
+            <a-select-option v-for="item in selectData[col]" :key="item.dic_enum_name">{{
+              item.dic_enum_name
+            }}</a-select-option>
           </a-select>
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.code"
             :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -486,16 +477,23 @@
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.code"
             :max="col === 'electric_meter_number' ? 9999999999999999999.9999 : 999999999"
             :min="0"
-            :placeholder="col === 'electric_meter_number' ? '根据右侧添加水点数据生成' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
+            :placeholder="
+              col === 'electric_meter_number'
+                ? '根据右侧添加水点数据生成'
+                : ipValue === '水力'
+                ? columnsTitle2[col]
+                : columnsTitle1[col]
+            "
             :step="col === 'initial_number' ? 0.0001 : 1"
             v-else-if="record.editable && numberFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
-          <template
-            v-else
-          >{{ selectFields.includes(col) ? (selectData[col].filter(c => c.dic_enum_name === text))[0].dic_enum_name : text }}</template>
+          <template v-else>{{
+            selectFields.includes(col) ? selectData[col].filter(c => c.dic_enum_name === text)[0].dic_enum_name : text
+          }}</template>
         </template>
         <template slot="operation" slot-scope="text, record">
           <template v-if="record.editable">
@@ -531,25 +529,16 @@
           </span>
         </template>
       </a-table>
-      <a-button
-        style="width: 100%; margin-top: 16px; margin-bottom: 8px"
-        type="dashed"
-        icon="plus"
-        @click="newDevice"
-      >新增设施</a-button>
+      <a-button style="width: 100%; margin-top: 16px; margin-bottom: 8px" type="dashed" icon="plus" @click="newDevice"
+        >新增设施</a-button
+      >
     </a-card>
 
     <a-modal title="请选择" v-model="visible" width="100%" @ok="handleOk" @cancel="visibleCancel">
       <a-row :gutter="8">
         <a-col :span="6">
           <a-input-search v-model="valTree" placeholder="请输入要查询的名称并按回车进行搜索" @search="valueChange" />
-          <ZTree
-            class="z-tree"
-            :setting="setting"
-            :nodes="dicTree"
-            @onClick="onClick"
-            @onCreated="handleCreated"
-          />
+          <ZTree class="z-tree" :setting="setting" :nodes="dicTree" @onClick="onClick" @onCreated="handleCreated" />
         </a-col>
         <a-col :span="18">
           <s-table
@@ -561,8 +550,13 @@
             :columns="demo"
             :data="loadData"
             :alert="false"
-            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
-            :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
+            :rowSelection="{ selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
+            :pagination="{
+              showSizeChanger: true,
+              pageSizeOptions: ['13', '26', '39'],
+              showQuickJumper: true,
+              showTotal: total => `共 ${total} 条`
+            }"
           >
             <div
               slot="filterDropdown"
@@ -573,7 +567,7 @@
               {{ setFilterColumnScope({ setSelectedKeys, selectedKeys, confirm, clearFilters, column }) }}
               <a-input
                 ref="input"
-                v-ant-ref="c => searchInput = c"
+                v-ant-ref="c => (searchInput = c)"
                 :placeholder="`${column.title}`"
                 :value="selectedKeys[0]"
                 @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
@@ -585,13 +579,12 @@
                 @click="() => handleSearch(selectedKeys, confirm, column.dataIndex)"
                 icon="search"
                 size="small"
-                :style="`width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'create_date'  ? 15 : 0}px`"
-              >查询</a-button>
-              <a-button
-                @click="() => handleReset(clearFilters, column.dataIndex)"
-                size="small"
-                style="width: 90px"
-              >重置</a-button>
+                :style="`width: 90px; margin-right: 8px; margin-left: ${column.dataIndex === 'create_date' ? 15 : 0}px`"
+                >查询</a-button
+              >
+              <a-button @click="() => handleReset(clearFilters, column.dataIndex)" size="small" style="width: 90px"
+                >重置</a-button
+              >
             </div>
             <a-icon
               slot="filterIcon"
@@ -599,10 +592,7 @@
               type="search"
               :style="{ color: filtered ? '#108ee9' : undefined }"
             />
-            <span
-              slot="serial"
-              slot-scope="text, record, index"
-            >{{ index + 1 + (current - 1) * currentSize }}</span>
+            <span slot="serial" slot-scope="text, record, index">{{ index + 1 + (current - 1) * currentSize }}</span>
             <span slot="is_valid" slot-scope="text">{{ text | valid }}</span>
           </s-table>
         </a-col>
@@ -614,6 +604,7 @@
       <a-table
         bordered
         :columns="columns_result"
+        :rowClassName="setRowClassName"
         :dataSource="result_detailData"
         :pagination="false"
         :loading="memberLoading"
@@ -626,15 +617,15 @@
             :value="text"
             @change="e => result_handleChange(e.target.value, record.key, col)"
           >
-            <a-radio
-              v-for="item in queryLevel"
-              :key="item.dic_enum_id"
-              :value="item.dic_enum_name"
-            >{{ item.dic_enum_name }}</a-radio>
+            <a-radio v-for="item in queryLevel" :key="item.dic_enum_id" :value="item.dic_enum_name">{{
+              item.dic_enum_name
+            }}</a-radio>
           </a-radio-group>
-          <template
-            v-else
-          >{{ select_resultFields.includes(col) ? (select_resultData[col].filter(c => c.dic_enum_name === text))[0].dic_enum_name : text }}</template>
+          <template v-else>{{
+            select_resultFields.includes(col)
+              ? select_resultData[col].filter(c => c.dic_enum_name === text)[0].dic_enum_name
+              : text
+          }}</template>
         </template>
       </a-table>
       <div>
@@ -664,11 +655,9 @@
               placeholder="验收总结论"
               @change="value => sumhandleChange(value, record.key, col)"
             >
-              <a-select-option
-                v-for="item in queryLevel"
-                :key="item.dic_enum_name"
-                :value="item.dic_enum_name"
-              >{{ item.dic_enum_name }}</a-select-option>
+              <a-select-option v-for="item in queryLevel" :key="item.dic_enum_name" :value="item.dic_enum_name">{{
+                item.dic_enum_name
+              }}</a-select-option>
             </a-select>
             <a-input-number
               :key="col"
@@ -678,9 +667,9 @@
               v-else-if="record.editable && numberFields.includes(col)"
               @change="value => sumhandleChange(value, record.key, col)"
             />
-            <template
-              v-else
-            >{{ selectFields.includes(col) ? (queryLevel.filter(c => c.value === text))[0].title : text }}</template>
+            <template v-else>{{
+              selectFields.includes(col) ? queryLevel.filter(c => c.value === text)[0].title : text
+            }}</template>
           </template>
           <template slot="operation" slot-scope="text, record">
             <template v-if="record.editable">
@@ -709,17 +698,21 @@
       :bordered="false"
       :tabList="tabList"
       :activeTabKey="activeTabKey"
-      @tabChange="(key) => {this.activeTabKey = key}"
+      @tabChange="
+        key => {
+          this.activeTabKey = key
+        }
+      "
     >
       <div class="attachment" v-if="activeTabKey === 'attach'">
         <a-upload-dragger
-          :headers="{businessToken:$store.state.user.token}"
+          :headers="{ businessToken: $store.state.user.token }"
           :action="uploadUrl"
           :multiple="true"
           :showUploadList="false"
           :fileList="fileList"
           @change="fileChange"
-          :data="{model:'B003', menu_id: 35, type: 0}"
+          :data="{ model: 'B003', menu_id: 35, type: 0 }"
         >
           <p class="ant-upload-drag-icon">
             <a-icon type="inbox" />
@@ -755,7 +748,7 @@
         <a-table :columns="approvalColumns" :dataSource="[]" :pagination="false" />
         <br />
         <a-card :bordered="false" title="工作流进度">
-          <a-steps :direction="isMobile() && 'vertical' || 'horizontal'" :current="2" progressDot>
+          <a-steps :direction="(isMobile() && 'vertical') || 'horizontal'" :current="2" progressDot>
             <a-step title="开始"></a-step>
             <a-step title="部门初审"></a-step>
             <a-step title="财务复核"></a-step>
@@ -767,7 +760,7 @@
 
     <!-- fixed footer toolbar -->
     <footer-tool-bar
-      :style="{ width: isSideMenu() && isDesktop() ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%'}"
+      :style="{ width: isSideMenu() && isDesktop() ? `calc(100% - ${sidebarOpened ? 256 : 80}px)` : '100%' }"
     >
       <span class="popover-wrapper">
         <a-popover
@@ -799,13 +792,15 @@
         type="primary"
         @click="saveOrSubmit('save')"
         :loading="saveLoading"
-      >保存</a-button>&nbsp;
+        >保存</a-button
+      >&nbsp;
       <a-button
         :disabled="![formStatus.saved, null, undefined, ''].includes(recording.status)"
         type="primary"
         @click="saveOrSubmit('submit')"
         :loading="submitLoading"
-      >提交</a-button>&nbsp;
+        >提交</a-button
+      >&nbsp;
       <a-button type="primary" @click="handleGoBack" :loading="loading">返回</a-button>
     </footer-tool-bar>
   </div>
@@ -818,8 +813,25 @@ import { STable, ZTree } from '@/components'
 import FooterToolBar from '@/components/FooterToolbar'
 import { mixin, mixinDevice } from '@/utils/mixin'
 import { getCondInfo } from '@/api/common.js'
-import { handlePurchase, queryone, getQueryResult, getQuerySource, getQueryCheckItem } from '@/api/equipmentMobilization/facilityAcceptance'
-import { uploadUrl, modules, model, getAttachments, downloadAttachment, delAttachment, formStatus, queryAllContract, queryAllEquipment, queryByEquipment } from '@/api/equipmentMobilization/upload'
+import {
+  handlePurchase,
+  queryone,
+  getQueryResult,
+  getQuerySource,
+  getQueryCheckItem
+} from '@/api/equipmentMobilization/facilityAcceptance'
+import {
+  uploadUrl,
+  modules,
+  model,
+  getAttachments,
+  downloadAttachment,
+  delAttachment,
+  formStatus,
+  queryAllContract,
+  queryAllEquipment,
+  queryByEquipment
+} from '@/api/equipmentMobilization/upload'
 import { mapGetters } from 'vuex'
 import { queryDictionaries } from '@/api/dictionary'
 import wbsModal from '@/views/equipmentMobilization/modules/wbs'
@@ -856,7 +868,7 @@ export default {
       default: ''
     }
   },
-  data () {
+  data() {
     return {
       clickObj: {},
       useOrgObj: {},
@@ -886,7 +898,7 @@ export default {
         {
           key: 'attach',
           tab: '附件上传'
-        },
+        }
         // {
         //   key: 'approval',
         //   tab: '审批记录'
@@ -972,13 +984,15 @@ export default {
           res.responsePageInfo.list.forEach(x => {
             x.code = x.equipment_code
           })
-          return res.result || {
-            pageSize: res.responsePageInfo.pageSize,
-            pageNo: res.responsePageInfo.pageNum,
-            totalPage: res.responsePageInfo.pages,
-            totalCount: res.responsePageInfo.total,
-            data: res.responsePageInfo.list
-          }
+          return (
+            res.result || {
+              pageSize: res.responsePageInfo.pageSize,
+              pageNo: res.responsePageInfo.pageNum,
+              totalPage: res.responsePageInfo.pages,
+              totalCount: res.responsePageInfo.total,
+              data: res.responsePageInfo.list
+            }
+          )
         })
       },
       newDataKey: '',
@@ -1022,13 +1036,15 @@ export default {
         parameter.size = parameter.pageSize
         delete parameter.pageSize
         delete parameter.pageNum
-        return getCondInfo(Object.assign(parameter, this.queryParam, {
-          "condition": {
-            "supName": "",
-            "organCode": "0000100002",
-            "legalPersonName": ""
-          }
-        })).then(res => {
+        return getCondInfo(
+          Object.assign(parameter, this.queryParam, {
+            condition: {
+              supName: '',
+              organCode: '0000100002',
+              legalPersonName: ''
+            }
+          })
+        ).then(res => {
           // 索引
           this.current = res.responseObject.data.current
           this.currentSize = res.responseObject.data.size
@@ -1330,47 +1346,59 @@ export default {
           scopedSlots: { customRender: 'operation' }
         }
       ],
-      detailFields: ['electric_meter_number', 'spec', 'multiplying_power', 'initial_number', 'name', 'num', 'product_org', 'use_site', 'use_org', 'remark', 'source'],
+      detailFields: [
+        'electric_meter_number',
+        'spec',
+        'multiplying_power',
+        'initial_number',
+        'name',
+        'num',
+        'product_org',
+        'use_site',
+        'use_org',
+        'remark',
+        'source'
+      ],
       detailFields2: ['name', 'spec', 'num', 'multiplying_power', 'use_site', 'use_org', 'remark', 'initial_number'],
       // 验收数据
       result_Data: [
         {
-          'check_code': '001',
+          check_code: '001',
           code: '1',
           check_item: '发动机',
           content: '声响，排烟情况',
           result: '符合要求'
         },
         {
-          'check_code': '00101',
+          check_code: '00101',
           code: '2',
           check_item: '变压器',
           content: '主机情况',
           result: '符合要求'
         },
         {
-          'check_code': '00102',
+          check_code: '00102',
           code: '3',
           check_item: '配电室',
           content: '跑、冒、滴、漏情况',
           result: '符合要求'
         },
         {
-          'check_code': '00103',
+          check_code: '00103',
           code: '4',
           check_item: '配电线路',
           content: '清洁、润滑及其它',
           result: '符合要求'
         },
         {
-          'check_code': '002',
+          check_code: '002',
           code: '5',
           check_item: '底盘',
           content: '整体情况',
           result: '符合要求'
         },
         {
-          'check_code': '00201',
+          check_code: '00201',
           code: '6',
           check_item: '配电箱',
           content: '调整紧固、声响情况',
@@ -1413,14 +1441,16 @@ export default {
         }
       ],
       result_detailFields: ['code', 'check_item', 'content', 'result'],
-      sumData: [{
-        all_total: '验收总结论：',
-        check_result: '符合要求',
-        content1: '结论描述：',
-        check_remark: '',
-        editable: true,
-        isNew: true
-      }],
+      sumData: [
+        {
+          all_total: '验收总结论：',
+          check_result: '符合要求',
+          content1: '结论描述：',
+          check_remark: '',
+          editable: true,
+          isNew: true
+        }
+      ],
       columnsSum: [
         {
           title: '序号',
@@ -1514,7 +1544,7 @@ export default {
     }
   },
   computed: {
-    fields () {
+    fields() {
       const field = {}
 
       this.user_data.forEach(col => {
@@ -1523,7 +1553,7 @@ export default {
       })
       return field
     },
-    user_data () {
+    user_data() {
       let { filteredInfo } = this
       filteredInfo = filteredInfo || {}
 
@@ -1576,7 +1606,7 @@ export default {
         }
       ]
     },
-    fields () {
+    fields() {
       const field = {}
 
       this.contract_data.forEach(col => {
@@ -1585,7 +1615,7 @@ export default {
       })
       return field
     },
-    contract_data () {
+    contract_data() {
       let { filteredInfo } = this
       filteredInfo = filteredInfo || {}
 
@@ -1640,7 +1670,7 @@ export default {
       ]
     },
 
-    fields () {
+    fields() {
       const fields = {}
 
       this.demo.forEach(col => {
@@ -1649,7 +1679,7 @@ export default {
       })
       return fields
     },
-    demo () {
+    demo() {
       let { filteredInfo } = this
       filteredInfo = filteredInfo || {}
 
@@ -1669,7 +1699,7 @@ export default {
             customRender: 'equipment_name'
           },
           onFilter: (value, record) => record.equipment_name.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
@@ -1687,7 +1717,7 @@ export default {
             customRender: 'material_model'
           },
           onFilter: (value, record) => record.material_model.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
@@ -1705,7 +1735,7 @@ export default {
             customRender: 'code'
           },
           onFilter: (value, record) => record.code.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
@@ -1723,7 +1753,7 @@ export default {
             customRender: 'customRender'
           },
           onFilter: (value, record) => record.unit_name.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
+          onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
                 this.searchInput.focus()
@@ -1733,18 +1763,18 @@ export default {
         }
       ]
     },
-    date () {
+    date() {
       return moment()
     },
-    uploadUrl () {
+    uploadUrl() {
       return uploadUrl
     },
-    formStatus () {
+    formStatus() {
       return formStatus
     }
   },
   watch: {
-    $route (to, from) {
+    $route(to, from) {
       if (this.$route.params.type === 1) {
         this.resetForm()
       }
@@ -1756,20 +1786,19 @@ export default {
       }
     }
   },
-  mounted () {
+  mounted() {
     this.isrequired = true
     this.$nextTick(() => {
       this.loadEditInfo(this.recording)
     })
-
   },
   methods: {
     ...mapGetters(['nickname']),
-    showSub (record) {
+    showSub(record) {
       this.clickObj = record
       this.$refs.subModal.add()
     },
-    handleSub (record) {
+    handleSub(record) {
       this.detailData.forEach(x => {
         if (x.key === this.clickObj.pid) {
           x.waterElectricityDetails.forEach(d => {
@@ -1782,14 +1811,14 @@ export default {
       })
     },
 
-    showWbsF (record) {
+    showWbsF(record) {
       console.log(record, 'wbs clickobj')
       this.clickObj = record
       this.$refs.wbsModalF.add()
     },
 
     // wbs
-    handleWbsF (record) {
+    handleWbsF(record) {
       // console.log('确定', record, this.clickObj)
       this.detailData.forEach(x => {
         if (x.key === this.clickObj.key) {
@@ -1798,14 +1827,14 @@ export default {
       })
     },
 
-    showWbs (record) {
+    showWbs(record) {
       console.log(record, 'wbs clickobj')
       this.clickObj = record
       this.$refs.wbsModal.add()
     },
 
     // wbs
-    handleWbs (record) {
+    handleWbs(record) {
       // console.log('确定', record, this.clickObj)
       this.detailData.forEach(x => {
         if (x.key === this.clickObj.pid) {
@@ -1819,18 +1848,18 @@ export default {
     },
 
     // 分包商
-    showUseModal (record) {
+    showUseModal(record) {
       console.log(1, record)
       this.clickObj = record
       this.userVisible = true
       this.$refs.Usertable && this.refresh('Usertable')
     },
-    cancelUserModal () {
+    cancelUserModal() {
       this.selectedRowKeys = []
       this.selectedRows = []
       this.userVisible = false
     },
-    handleUser () {
+    handleUser() {
       const arr = this.selectedRows
       if (!arr.length) return
       if (arr.length > 1) return this.noSelect()
@@ -1854,10 +1883,10 @@ export default {
       this.cancelUserModal()
     },
     // 双击确定
-    dbClick2 (record) {
+    dbClick2(record) {
       return {
         on: {
-          dblclick: (e) => {
+          dblclick: e => {
             this.selectedRows[0] = record
             this.handleUser(record.id)
           }
@@ -1866,10 +1895,10 @@ export default {
     },
 
     // 双击确定
-    dbClick (record) {
+    dbClick(record) {
       return {
         on: {
-          dblclick: (e) => {
+          dblclick: e => {
             this.selectedRows[0] = record
             this.handleName(record.id)
           }
@@ -1878,7 +1907,7 @@ export default {
     },
 
     // 设施明细选择设备
-    showModal (key) {
+    showModal(key) {
       queryAllEquipment().then(res => {
         this.dicTree = res.responseList
       })
@@ -1888,8 +1917,11 @@ export default {
       this.$refs.Etables && this.refresh('Etables')
     },
 
+    setRowClassName() {
+      return 'setRowClassName'
+    },
     // 设备树 选择数据确定
-    handleOk () {
+    handleOk() {
       if (this.selectedRowKeys.length === 0) {
         this.$confirm({
           title: '提示',
@@ -1899,9 +1931,7 @@ export default {
       }
       const dataArr = this.selectedRows[0]
       if (this.ipValue === '水力') {
-
       } else {
-
       }
       if (this.newDataKey === '1') this.result_detailData = []
       this.detailData = this.detailData.map(x => {
@@ -1935,7 +1965,7 @@ export default {
     },
 
     // 设备弹窗 点击请求表格
-    onClick: function (evt, treeId, treeNode) {
+    onClick: function(evt, treeId, treeNode) {
       // 点击事件
       console.log(evt.type, treeNode)
       this.queryParam = {
@@ -1945,27 +1975,27 @@ export default {
     },
 
     // 展开设备树第一级
-    handleCreated: function (ztreeObj) {
+    handleCreated: function(ztreeObj) {
       // onCreated 中操作ztreeObj对象展开第一个节点
       ztreeObj.expandNode(ztreeObj.getNodes()[0], true)
     },
 
     // 设备树 模糊搜索
-    valueChange (e) {
+    valueChange(e) {
       console.log(e)
       this.valTree = e
       queryAllEquipment({ e_name: this.valTree }).then(res => (this.dicTree = res.responseList))
     },
 
     // 取消模态框
-    visibleCancel () {
+    visibleCancel() {
       this.visible = false
       this.selectedRowKeys = []
       this.selectedRows = []
     },
 
     // 重置刷新表格
-    refresh (ref) {
+    refresh(ref) {
       this.queryParam = {}
       this.selectedRowKeys = []
       this.selectedRows = []
@@ -1983,19 +2013,19 @@ export default {
     },
 
     // 表格内过滤函数
-    handleSearch (selectedKeys, confirm, col) {
+    handleSearch(selectedKeys, confirm, col) {
       confirm()
       // if (col) this.refresh(true)
     },
 
-    handleReset (clearFilters, col) {
+    handleReset(clearFilters, col) {
       clearFilters()
       // delete this.queryParam[col]
       // this.refresh(true)
     },
 
     // 重置页面数据
-    resetForm () {
+    resetForm() {
       this.form.resetFields()
       this.result_detailData = []
       this.detailData = []
@@ -2006,17 +2036,17 @@ export default {
       this.sumData[0]['check_remark'] = ''
       this.ipValue = '电力'
     },
-    setFilterColumnScope (data) {
+    setFilterColumnScope(data) {
       const { column } = data
       this.customFilterColumn[column.dataIndex] = data
     },
     // 返回
-    handleGoBack () {
+    handleGoBack() {
       this.resetForm()
       this.$root.$emit('global::evt.multitabClose', this.$router.currentRoute.fullPath)
       this.$router.push('facilityAcceptanceList')
     },
-    handleChangeValue (e) {
+    handleChangeValue(e) {
       console.log(e)
       this.ipValue = e
       if (e === '电力') {
@@ -2049,20 +2079,20 @@ export default {
         })
       })
     },
-    onSelectChange (selectedRowKeys, selectedRows) {
+    onSelectChange(selectedRowKeys, selectedRows) {
       console.log('selectedRowKeys changed: ', selectedRowKeys)
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
     // 显示合同弹窗
-    showTable () {
+    showTable() {
       this.visible_name = true
       this.$refs.table && this.refresh('table')
     },
-    handleCancel () {
+    handleCancel() {
       this.visible_name = false
     },
-    handleName (val) {
+    handleName(val) {
       // const arr = this.contractData.responsePageInfo.list.filter(item => item.id === val[0])
       const arr = this.selectedRows
       if (!arr.length) return
@@ -2075,7 +2105,7 @@ export default {
       this.handleCancel()
     },
 
-    loadEditInfo (data) {
+    loadEditInfo(data) {
       const { form } = this
       console.log(`将加载 ${data.id} 信息到表单`)
       queryDictionaries({ dic_type_id: 1015 }).then(res => {
@@ -2136,7 +2166,22 @@ export default {
           item.code = index
           return item
         })
-        const formData = pick(data, ['serial_number', 'creator_org_name', 'creator_user_name', 'create_date', 'check_org', 'contract_num', 'install_org', 'fee_with_tax', 'check_date', 'install_project', 'install_person', 'check_person', 'check_result', 'check_remark'])
+        const formData = pick(data, [
+          'serial_number',
+          'creator_org_name',
+          'creator_user_name',
+          'create_date',
+          'check_org',
+          'contract_num',
+          'install_org',
+          'fee_with_tax',
+          'check_date',
+          'install_project',
+          'install_person',
+          'check_person',
+          'check_result',
+          'check_remark'
+        ])
         formData.create_date = moment(data.create_date)
         formData.check_date = moment(data.check_date)
         console.log('formData', formData)
@@ -2144,10 +2189,14 @@ export default {
       }
     },
 
-    addElectric (key) {
+    addElectric(key) {
       if (this.detailData.length > 0) {
         const numson = this.detailData[key - 1].waterElectricityDetails.length - 1
-        if (this.detailData[key - 1].waterElectricityDetails.length > 0 && this.detailData[key - 1].waterElectricityDetails[numson].name === '') return this.noSelect('请填完上一条数据！')
+        if (
+          this.detailData[key - 1].waterElectricityDetails.length > 0 &&
+          this.detailData[key - 1].waterElectricityDetails[numson].name === ''
+        )
+          return this.noSelect('请填完上一条数据！')
       }
       // 控制当前添加的子表格的行展开
       this.curExpandedRowKeys = [key]
@@ -2159,7 +2208,10 @@ export default {
         }
       })
       this.detailData[key - 1].waterElectricityDetails.push({
-        key: length === 0 ? '1' : (parseInt(this.detailData[key - 1].waterElectricityDetails[length - 1].key) + 1).toString(),
+        key:
+          length === 0
+            ? '1'
+            : (parseInt(this.detailData[key - 1].waterElectricityDetails[length - 1].key) + 1).toString(),
         code: length + 1,
         pid: key,
         name: '',
@@ -2171,8 +2223,9 @@ export default {
         editable: true,
         isNew: true
       })
-      this.detailData[key - 1].waterElectricityDetails.forEach((x, i) => x.code = i + 1)
-      if (this.ipValue === '水力') this.detailData[key - 1].water_meter_number = this.detailData[key - 1].waterElectricityDetails.length
+      this.detailData[key - 1].waterElectricityDetails.forEach((x, i) => (x.code = i + 1))
+      if (this.ipValue === '水力')
+        this.detailData[key - 1].water_meter_number = this.detailData[key - 1].waterElectricityDetails.length
       else this.detailData[key - 1].electric_meter_number = this.detailData[key - 1].waterElectricityDetails.length
     },
 
@@ -2212,16 +2265,17 @@ export default {
       const data2 = {
         key: length === 0 ? '1' : (parseInt(this.detailData[length - 1].key) + 1).toString(),
         code: length + 1,
+        source: '',
         name: '',
         spec: '',
+        num: '',
+        initial_number: '',
+        multiplying_power: '',
         use_site: '',
         use_org: '',
         remark: '',
         electric_meter_number: 1,
-        num: '',
-        multiplying_power: '',
         product_org: '',
-        source: '',
         waterElectricityDetails: [
           {
             key: '1',
@@ -2230,10 +2284,11 @@ export default {
             name: '',
             spec: '',
             initial_number: '',
+            multiplying_power: '',
+            num: '',
             use_site: '',
             use_org: '',
             remark: '',
-            num: '',
             editable: true,
             isNew: true
           }
@@ -2252,22 +2307,22 @@ export default {
     },
 
     // 设施明细 表格展开事件 控制只有单独的行展开
-    expand (expanded, record) {
+    expand(expanded, record) {
       if (this.curExpandedRowKeys.length > 0) {
-        let index = this.curExpandedRowKeys.indexOf(record.key);
+        let index = this.curExpandedRowKeys.indexOf(record.key)
         if (index > -1) {
-          this.curExpandedRowKeys.splice(index, 1);
+          this.curExpandedRowKeys.splice(index, 1)
         } else {
-          this.curExpandedRowKeys.splice(0, this.curExpandedRowKeys.length);
-          this.curExpandedRowKeys.push(record.key);
+          this.curExpandedRowKeys.splice(0, this.curExpandedRowKeys.length)
+          this.curExpandedRowKeys.push(record.key)
         }
       } else {
-        this.curExpandedRowKeys.push(record.key);
+        this.curExpandedRowKeys.push(record.key)
       }
     },
 
     // 提示框
-    noSelect (title) {
+    noSelect(title) {
       const secondsToGo = 2 // 两秒后自动关闭
       const modal = this.$info({
         title: '提示',
@@ -2279,7 +2334,7 @@ export default {
       }, secondsToGo * 1000)
     },
 
-    remove (key) {
+    remove(key) {
       const newData = this.detailData.filter(item => item.key !== key)
       newData.forEach((x, i) => {
         x.code = i + 1
@@ -2287,7 +2342,7 @@ export default {
       if (!newData.length) this.result_detailData = []
       this.detailData = newData
     },
-    removeSon (record) {
+    removeSon(record) {
       this.detailData.forEach(x => {
         if (x.key === record.pid) {
           if (x.waterElectricityDetails.length === 1) return this.noSelect('需要至少填写一条数据')
@@ -2302,34 +2357,37 @@ export default {
       })
       console.log(this.detailData)
     },
-    toggle (key) {
+    toggle(key) {
       const target = this.data.filter(item => item.key === key)[0]
       target.editable = !target.editable
     },
-    cancel (key) {
+    cancel(key) {
       const target = this.data.filter(item => item.key === key)[0]
       target.editable = false
     },
-    handleChange (value, key, column) {
+    handleChange(value, key, column) {
       const newData = [...this.detailData]
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
         target[column] = value
-        if (column === 'multiplying_power' && typeof target[column] === Number) target[column] = parseInt(target[column])
+        if (column === 'multiplying_power' && typeof target[column] === Number)
+          target[column] = parseInt(target[column])
         this.detailData = newData
       }
     },
-    handleChange2 (value, record, column) {
+    handleChange2(value, record, column) {
       const arrData = [...this.detailData]
-      const target = arrData.filter(x => x.key === record.pid)[0].waterElectricityDetails.filter(item => record.key === item.key)[0]
+      const target = arrData
+        .filter(x => x.key === record.pid)[0]
+        .waterElectricityDetails.filter(item => record.key === item.key)[0]
       if (target) {
         target[column] = value
-        if (column === 'multiplying_power' && typeof target[column] === Number) target[column] = parseInt(target[column])
+        if (column === 'multiplying_power' && typeof target[column] === Number)
+          target[column] = parseInt(target[column])
         this.detailData = arrData
       }
-
     },
-    result_handleChange (value, key, column) {
+    result_handleChange(value, key, column) {
       const newresultData = [...this.result_detailData]
       const target = newresultData.filter(item => key === item.key)[0]
       if (target) {
@@ -2339,7 +2397,7 @@ export default {
       }
       console.log('result', this.result_detailData)
     },
-    sumhandleChange (value, key, column) {
+    sumhandleChange(value, key, column) {
       const newsumData = [...this.sumData]
       const target = newsumData.filter(item => key === item.key)[0]
       if (target) {
@@ -2349,20 +2407,23 @@ export default {
       }
     },
     // 附件下载
-    download (record) {
+    download(record) {
       downloadAttachment({
         menu_id: 35,
         type: 0,
-        details: [{
-          filePath: record.file_path,
-          fileName: record.file_name
-        }]
+        details: [
+          {
+            filePath: record.file_path,
+            fileName: record.file_name
+          }
+        ]
       }).then(res => {
-        res.status || FileSaver.saveAs(new Blob([res], { type: 'application/octet-stream;charset=utf-8' }), record.file_name)
+        res.status ||
+          FileSaver.saveAs(new Blob([res], { type: 'application/octet-stream;charset=utf-8' }), record.file_name)
       })
     },
     // 附件删除
-    removeAttachment (record) {
+    removeAttachment(record) {
       const data = {
         menu_id: 35,
         type: 0,
@@ -2383,8 +2444,10 @@ export default {
     },
 
     // 最终全页面提交
-    saveOrSubmit (type) {
-      const { form: { validateFields } } = this
+    saveOrSubmit(type) {
+      const {
+        form: { validateFields }
+      } = this
       const that = this
       if (type === 'save') {
         this.isrequired = false
@@ -2398,15 +2461,23 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.code !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'use_org' && !break1 && key != 'remark') {
                   (this.ipValue === '水力' ? this.columns2 : this.columns1).map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  console.log(key, '提交')
+                  if (document.querySelector(`.${keyname + d.code} input`)) {
+                    document.querySelector(`.${keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code}`)) {
+                    document.querySelector(`.${keyname + d.code}`).focus()
+                  }
                   this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.code}行：${colname}不能为空`
@@ -2415,14 +2486,21 @@ export default {
                   return
                 }
               } else {
-                if (!break1) [
+                if (!break1) {
                   d.waterElectricityDetails.forEach(c => {
                     for (let k in c) {
                       if (!c[k] && c[k] !== 0 && k !== 'remark' && k !== 'aaaaa') {
                         this.columnsSon.forEach(item => {
-                          if (item.dataIndex == k) colname = item.title
-                        })
-                        console.log(colname)
+                          if (item.dataIndex == k) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
+                  })
+                  if (document.querySelector(`.${'h' +   keyname + d.code} input`)) {
+                    document.querySelector(`.${'h' +  keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${'h' +  keyname + d.code}`)) {
+                    document.querySelector(`.${'h' +  keyname + d.code}`).focus()
+                  }
                         this.$notification['warn']({
                           message: '提示',
                           description: `提交时第${d.code}行下第${c.code}行：${colname}不能为空`
@@ -2432,7 +2510,7 @@ export default {
                       }
                     }
                   })
-                ]
+                }
               }
             }
           }
@@ -2440,9 +2518,7 @@ export default {
         if (break1) return
       }
       setTimeout(() => {
-
         validateFields((err, values) => {
-
           // values.waterElectricityDetails = that.detailData.map(x => x.waterElectricityDetails)
           const arr = that.detailData.map(x => {
             for (let key in x) {
@@ -2473,7 +2549,6 @@ export default {
           values.check_remark = that.sumData[0]['check_remark']
           values.files = that.fileList
           values.equip_code = that.equip_code
-
 
           if (that.recording) {
             values.creator_org_id = that.recording.creator_org_id
@@ -2508,57 +2583,59 @@ export default {
               this.$confirm({
                 title: '提示',
                 content: `确定提交当前表单?`,
-                onOk () {
-                  document.querySelector('.ant-modal-confirm-btns>.ant-btn-default').style.visibility = "hidden"
+                onOk() {
+                  document.querySelector('.ant-modal-confirm-btns>.ant-btn-default').style.visibility = 'hidden'
                   that.submitLoading = true
 
-                  return handlePurchase(values, 'submit').then(res => {
-                    if (res.status === '0') {
-                      that.$notification['success']({
-                        message: '提示',
-                        description: res.msg
-                      })
-                      that.handleGoBack() // 返回列表页
-                    }
-                  }).finally(() => {
-                    that.submitLoading = false
-                  })
+                  return handlePurchase(values, 'submit')
+                    .then(res => {
+                      if (res.status === '0') {
+                        that.$notification['success']({
+                          message: '提示',
+                          description: res.msg
+                        })
+                        that.handleGoBack() // 返回列表页
+                      }
+                    })
+                    .finally(() => {
+                      that.submitLoading = false
+                    })
                 },
 
-                onCancel () { }
+                onCancel() {}
               })
             }
             if (type === 'save') {
               that.saveLoading = true
 
-              return handlePurchase(values, 'create').then(res => {
-                that.saveLoading = false
-                if (res.status === '0') {
-                  that.$notification['success']({
-                    message: '提示',
-                    description: res.msg
-                  })
-                  that.handleGoBack() // 返回列表页
-                }
-              }).finally(() => {
-                that.submitLoading = false
-              })
+              return handlePurchase(values, 'create')
+                .then(res => {
+                  that.saveLoading = false
+                  if (res.status === '0') {
+                    that.$notification['success']({
+                      message: '提示',
+                      description: res.msg
+                    })
+                    that.handleGoBack() // 返回列表页
+                  }
+                })
+                .finally(() => {
+                  that.submitLoading = false
+                })
             }
           }
         })
       }, 100)
     },
-    scrollToField (fieldKey) {
+    scrollToField(fieldKey) {
       const labelNode = document.querySelector(`label[for="${fieldKey}"]`)
       if (labelNode) {
         labelNode.scrollIntoView(true)
       }
     },
 
-
-
     // 限制上传附件的大小
-    beforeUploaddata (file) {
+    beforeUploaddata(file) {
       const isLt10M = file.size / 1024 / 1024 < 10
       if (!isLt10M) {
         this.$message.error('单个文件的大小不能超过10M！')
@@ -2568,7 +2645,7 @@ export default {
       return isLt10M
     },
     // 限制单次提交的总文件大小
-    sumUpliad () {
+    sumUpliad() {
       let sizeSum = 0
       this.fileList.map(x => {
         sizeSum += x.file_size
@@ -2586,7 +2663,7 @@ export default {
     },
 
     // 文件上传
-    fileChange (info) {
+    fileChange(info) {
       if (!this.sizeable) return false
       let fileList = [...info.fileList]
       fileList = fileList.filter(file => {
@@ -2616,6 +2693,13 @@ export default {
 </script>
 
 <style lang="less" scoped>
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
+}
 .card {
   margin-bottom: 24px;
 }

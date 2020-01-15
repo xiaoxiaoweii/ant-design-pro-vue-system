@@ -214,7 +214,7 @@
         <span slot="is_valid" slot-scope="text">{{ text | valid }}</span>
       </s-table>
     </a-modal>
-    <!-- 需求明细 -->
+    <!-- 材料明细 -->
     <a-card class="card" title="材料明细" :bordered="false">
       <a-table
         :columns="columns"
@@ -229,6 +229,7 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
+            :class="col + record.code"
             :maxlength="128"
             :placeholder="columns[i].title"
             v-if="record.editable && inputFields.includes(col)"
@@ -239,6 +240,7 @@
           <a-input
             read-only
             :key="col"
+            :class="col + record.code"
             :maxlength="128"
             :placeholder="columns[i].title"
             v-else-if="record.editable && col === 'name'"
@@ -249,6 +251,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.code"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :placeholder="col === 'purchase_privi' ? '采购权限' : columns[i].title"
@@ -261,6 +264,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+            :class="col + record.code"
             :value="text"
             :placeholder="columns[i].title"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -268,6 +272,7 @@
           />
           <a-input-number
             :key="col"
+            :class="col + record.code"
             :value="text"
             :max="col === 'num' ? 999999999.99 : 999999999.99"
             :min="col === 'num' ? 0.00 : 0.00"
@@ -1362,7 +1367,7 @@ export default {
       getDictionaryEnum({ pageNum: 1, pageSize: 13, dic_type_id: 1014 }).then(res => {
         this.selectData['purchase_privi'] = res.responseList
       })
-      this.loadEditInfo(this.recording)
+      this.loadEditInfo()
     })
   },
   methods: {
@@ -1410,6 +1415,7 @@ export default {
       this.selectedRows = []
       if (!arr.length) return
       if (val.length > 1) return this.noSelect()
+      this.detailData = []
       this.contract_code = arr[0].contract_code
       this.form.setFieldsValue({
         contract_no: arr[0].contract_code,
@@ -1646,11 +1652,6 @@ export default {
         target[column] = value
         if (['price_without_tax', 'tax_rate', 'num'].includes(column)) {
           if (target.num > this.matNum) target.num = this.matNum
-          // target.tax = target.tax || 0
-          // target.tax_rate = target.tax_rate || 0
-          // target.price_without_tax = target.price_without_tax || 0
-          // target.amount = target.amount || 0
-          // target.num = target.num || 0
           if (target.price_without_tax && target.tax_rate && target.num) {
             target.tax = ((target.price_without_tax * target.tax_rate / 100) * target.num).toFixed(2)
           }
@@ -1667,11 +1668,6 @@ export default {
             target.total_amount = 0
             target.amount = 0
           }
-          // this.form.setFieldsValue({
-          //   total_amount: newData.reduce((total, d) => {
-          //     return total + Number(d.amount)
-          //   }, 0)
-          // })
           const sumData = newData.filter(d => d.code !== '合计')
           newData.forEach(x => {
             if (x.code === '合计') {
@@ -1751,7 +1747,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1759,15 +1755,27 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.code !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.code} input`)) {
+                    document.querySelector(`.${keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code}`)) {
+                    document.querySelector(`.${keyname + d.code}`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code} .ant-select-selection__rendered`)) {
+                    console.log(this.$refs[keyname + d.code])
+                    this.$refs[keyname + d.code].focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.code}行：${colname}不能为空`
                   })

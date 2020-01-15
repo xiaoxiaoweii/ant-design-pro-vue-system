@@ -4,6 +4,7 @@
     :bodyStyle="currentComponet === 'Edit' ? bodyStyle : {}"
   >
     <component
+      v-if="isRouterAlive"
       @onEdit="handleEdit"
       @onGoBack="handleGoBack"
       :recording="record"
@@ -35,6 +36,7 @@ export default {
   },
   data () {
     return {
+      isRouterAlive:true,
       currentComponet: 'List',
       record: '',
       bodyStyle: {
@@ -47,20 +49,23 @@ export default {
 
   },
   methods: {
+    reload() {
+      this.isRouterAlive = false
+      this.$nextTick(function() {
+        this.isRouterAlive = true
+      })
+    },
     handleEdit (record) {
       this.record = record || ''
       this.currentComponet = 'Edit'
-      console.log(record)
     },
     handleDetail (record) {
       this.record = record || ''
       this.currentComponet = 'Detail'
-      console.log(record)
     },
     handleRead (record) {
       this.record = record || ''
       this.currentComponet = 'Read'
-      console.log(record)
     },
     handleGoBack () {
       this.record = ''
@@ -71,6 +76,11 @@ export default {
     '$route.path' () {
       this.record = ''
       this.currentComponet = 'List'
+    },
+    $route(to,from) {
+      if (to.path === '/planManagement/disposalsList') {
+        this.reload()
+      }
     }
   }
 }

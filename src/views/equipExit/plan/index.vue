@@ -74,11 +74,8 @@ export default {
         this.reload()
     },
     $route (to, from) {
-      if (to.path === '/equipExit/plan/planList') {
-        if (!this.$store.state.keepaliveArr.includes('/equipExit/plan/planList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/equipExit/plan/planList')
+      if (to.path === '/equipExit/planExitList') {
+        this.reload()
       }
     }
 

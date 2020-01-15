@@ -341,6 +341,14 @@ export default {
         ],
       columns: [
         {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
+        {
           title: '设备名称',
           dataIndex: 'name',
           key: 'name',
@@ -648,8 +656,8 @@ export default {
       if (data.id) {
         await queryone({ id: data.id, menu_id: 28 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
-         
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code = i+1
             if (d.number===0) d.number = ''
             d.key = d.id
 

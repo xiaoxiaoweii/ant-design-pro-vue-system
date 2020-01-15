@@ -106,6 +106,7 @@
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
+            :class="col+record.order_number"
             :key="col"
             maxlengh="128"
             :placeholder="columnTitle[i]"
@@ -115,6 +116,7 @@
             @change="e => handleChange(e.target.value, record.order_number, col)"
           />
           <a-select
+            :class="col+record.order_number"
             :key="col"
             v-else-if="selectFields.includes(col)"
             :defaultValue="record[col]"
@@ -128,6 +130,7 @@
             >{{ item.dic_enum_name }}</a-select-option>
           </a-select>
           <a-date-picker
+            :class="col+record.order_number"
             :showTime="{ format: 'HH:mm' }" 
             :key="col"
             :value="text"
@@ -137,6 +140,7 @@
             @change="value => handleChange(value, record.order_number, col)"
           />
           <a-input-number
+            :class="col+record.order_number"
             :key="col"
             :value="text"
             :min="0.00"
@@ -736,6 +740,7 @@ export default {
           values.details = that.detailData
           if(type==='submit'){
             let colname=''
+            let keyname=''
             let break1=false
             values.details.map((d,i)=>{
               for(var key in d){
@@ -743,8 +748,14 @@ export default {
                   that.detailColumns.map((item)=>{
                     if(item.dataIndex==key){
                       colname=item.title
-                    }
+                      keyname=item.dataIndex
+                    }                 
                   })
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
                   that.$notification['warning']({
                     message:"提示",
                     description:`提交时第${i+1}行：${colname}不能为空`
@@ -752,7 +763,10 @@ export default {
                   break1=true
                   return 
                 }
-              }
+                if(break1){
+                  return
+                }
+              } 
             })
             if(break1) return
           }

@@ -25,7 +25,7 @@ import Edit from '@/views/computation/equipFee/table/Edit'
 import Read from '@/views/computation/equipFee/table/Read'
 import Detail from '@/views/computation/equipFee/table/Detail'
 export default {
-  name: ' equipFee ',
+  name: 'equipFeeList',
   components: {
     AInput,
     ATextarea,
@@ -86,11 +86,12 @@ export default {
        this.reload()}
     },
     $route(to, from) {
-      if (to.path === '/computation/equipFee/equipFeeList') {
-        if (!this.$store.state.keepaliveArr.includes('/computation/equipFee/equipFeeList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/computation/equipFee/equipFeeList')
+      if (to.path === '/computation/equipFeeList') {
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/computation/equipFeeList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/computation/equipFeeList')
       }
     }
 

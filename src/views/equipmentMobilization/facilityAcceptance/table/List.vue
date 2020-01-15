@@ -480,7 +480,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/equipmentMobilization/facilityAcceptanceNew' || from.path === '/equipmentMobilization/facilityAcceptanceEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

@@ -104,6 +104,7 @@
         rowKey="id"
         bordered
         :columns="columnsTable?equipColumns:fengbaoColumns"
+        :customRow="dbClick"
         :data="loadTableData"
         :alert="false"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
@@ -169,6 +170,7 @@
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
+            :class="col+record.order_number"
             :key="col"
             maxlengh="128"
             :placeholder="columnTitle[i]"
@@ -179,6 +181,7 @@
             @click="e =>showTree(col, record.order_number, record)"
           />
           <a-select
+            :class="col+record.order_number"
             :key="col"
             v-else-if="selectFields.includes(col)"
             :value="text"
@@ -192,10 +195,12 @@
             >{{ item.dic_enum_name }}</a-select-option>
           </a-select>
           <a-input-number
+            :class="col+record.order_number"
             :key="col"
             :value="text"
-            :min="0.00"
-            :step="0.01"
+            min="0"
+            :max="record['check_number']"
+            step="0.00001"
             :placeholder="columnTitle[i]"
             v-else-if="numberFields.includes(col)"
             @change="value => handleChange(value, record.order_number, col)"
@@ -1031,6 +1036,17 @@ export default {
       this.visible_name = true
       this.$refs.Mtables && this.$refs.Mtables.refresh(true)
     },
+    // 双击确定
+    dbClick (record) {
+      return {
+        on: {
+          dblclick: (e) => {
+            this.selectedRowKeys[0]=record.id
+            this.handleName(this.selectedRowKeys)
+          }
+        }
+      }
+    },
     handleName (val) {
       this.visible_name = false
       if(this.columnsTable){ //拉起点验单
@@ -1061,20 +1077,17 @@ export default {
       this.project_name = false
     },
     handleChange (value, order_number, column) { //发料单明细更改
-      console.log(2222222)
       this.detailData=this.detailData.map(item=>{ 
         if(order_number == item.order_number){
           if(column=='number'){
-            if(!isNaN(value)&&value>=0&&value<=parseFloat(item['check_number'])){
+            //if(!isNaN(value)&&value>=0&&value<=parseFloat(item['check_number'])){
               item['number'] = value
               item['fee_whithout_tax']=(parseFloat(item['price_with_tax']*value)).toFixed(2)
               item['sum_with_tax']=(parseFloat(item['price_without_tax']*value)).toFixed(2)
               item['tax_fee']=(parseFloat(item['fee_whithout_tax'])-parseFloat(item['sum_with_tax'])).toFixed(2)
-            }else{
-               this.noSelect("该材料最大数量为"+item['check_number'])
-            }
-          }else{
-            item[column] = value
+            // }else{
+            //    this.noSelect("该材料最大数量为"+item['check_number'])
+            // }
           }
         }
         return item
@@ -1220,6 +1233,7 @@ export default {
           values.details = that.detailData
           if(type==='submit'){
             let colname=''
+            let keyname=''
             let break1=false
             values.details.map((d,i)=>{
               for(var key in d){
@@ -1227,8 +1241,14 @@ export default {
                   that.detailColumns.map((item)=>{
                     if(item.dataIndex==key){
                       colname=item.title
-                    }
+                      keyname=item.dataIndex
+                    }                 
                   })
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
                   that.$notification['warning']({
                     message:"提示",
                     description:`提交时第${i+1}行：${colname}不能为空`
@@ -1236,7 +1256,10 @@ export default {
                   break1=true
                   return 
                 }
-              }
+                if(break1){
+                  return
+                }
+              } 
             })
             if(break1) return
           }

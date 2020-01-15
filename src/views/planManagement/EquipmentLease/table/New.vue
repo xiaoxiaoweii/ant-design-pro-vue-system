@@ -680,8 +680,8 @@ export default {
         '计划租期/工作量',
         '税率(%)',
         '税额',
-        '含税金额',
-        '不含税金额',
+        '含税总额',
+        '不含税总额',
         '备注'
       ],
       columns: [
@@ -819,14 +819,14 @@ export default {
           scopedSlots: { customRender: 'tax_fee' }
         },
         {
-          title: '含税金额',
+          title: '含税总额',
           dataIndex: 'sum_with_tax',
           key: 'sum_with_tax',
           align: 'center',
           scopedSlots: { customRender: 'sum_with_tax' }
         },
         {
-          title: '不含税金额',
+          title: '不含税总额',
           dataIndex: 'sum_tax_fee',
           key: 'sum_tax_fee',
           align: 'center',
@@ -1354,7 +1354,7 @@ export default {
           x.specification = arr[0].equipment_spec
           x.unit = arr[0].equipment_unit
           x.num = arr[0].approved_fictitious_num
-          this.myNum.push(arr[0].approved_fictitious_num)
+          this.myNum[i] = (arr[0].approved_fictitious_num)
           x.planned_in_date1 = moment(arr[0].estimated_in_date)
           x.planned_out_date1 = moment(arr[0].estimated_out_date)
           x.requirement_id = arr[0].id
@@ -1595,7 +1595,7 @@ export default {
                   return
                 }
               }
-            let numbreak = false  
+            let numbreak = false
             values.details.map((x,i)=>{
               if(x.num>this.myNum[i]) {
                 this.$notification['warning']({

@@ -333,13 +333,6 @@ export default {
           align: 'center',
           scopedSlots: { customRender: 'deduct' }
         },
-        {
-          title: '操作',
-          key: 'action',
-          width: '80px',
-          align: 'center',
-          scopedSlots: { customRender: 'operation' }
-        }
       ],       
       tabList: [
         {

@@ -723,7 +723,7 @@ export default {
       this.detailData.forEach(x => {
         if (!x[attr]) x[attr] = 0
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100

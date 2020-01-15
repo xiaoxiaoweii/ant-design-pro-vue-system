@@ -1,49 +1,5 @@
 // eslint-disable-next-line
-import { UserLayout, BasicLayout, RouteView, BlankLayout, PageView } from '@/layouts'
-// 导航菜单
-export const asyncRouterMap = [
-
-  {
-    path: '/',
-    name: 'index',
-    component: BasicLayout,
-    meta: { title: '首页' },
-    redirect: '/planManagement',
-    children: [
-      // planManagement
-      {
-        path: '/planManagement',
-        name: 'planManagement',
-        redirect: '/planManagement/RequireList',
-        component: RouteView,
-        meta: { title: '计划管理', keepAlive: true, icon: 'schedule', permission: [ 'dashboard' ] },
-        children: [
-          {
-            path: '/planManagement/RequireList',
-            name: 'RequireList',
-            component: () => import('@/views/planManagement/require/RequireList'),
-            meta: { title: '设备需求计划', keepAlive: false, permission: [ 'dashboard' ] }
-          },
-          {
-            path: '/planManagement/RequireNew',
-            name: 'RequireNew',
-            component: () => import('@/views/planManagement/require/table/New'),
-            meta: { title: '新增设备需求计划', keepAlive: false, permission: [ 'dashboard' ] }
-          },
-          {
-            path: '/planManagement/RequireEdit',
-            name: 'RequireEdit',
-            component: () => import('@/views/planManagement/require/table/Edit'),
-            meta: { title: '修改需求计划', keepAlive: false, permission: [ 'dashboard' ] }
-          }    
-        ]
-      }
-    ]
-  },
-  {
-    path: '*', redirect: '/404', hidden: true
-  }
-]
+import { UserLayout, BlankLayout } from '@/layouts'
 
 /**
  * 基础路由
@@ -115,6 +71,6 @@ export const constantRouterMap = [
   {
     path: '/404',
     //  component: () => import(/* webpackChunkName: "fail" */ '@/views/user/logout')
-    component: () => import(/* webpackChunkName: "fail" */ '@/views/404')
+    component: () => import(/* webpackChunkName: "fail" */ '@/views/exception/404')
   }
 ]

@@ -475,7 +475,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/settlement/equipClearingFeeNew' || from.path === '/settlement/equipClearingFeeEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

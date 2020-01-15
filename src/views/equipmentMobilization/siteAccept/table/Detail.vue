@@ -54,6 +54,7 @@
           ref="table"
           :columns="acceptColumns"
           :pagination="false"
+          :rowClassName="setRowClassName"
           :dataSource="acceptData"
           :loading="memberLoading"
           rowKey="key"
@@ -568,6 +569,9 @@ export default {
       })
     },
 
+    setRowClassName(){
+      return 'setRowClassName'
+    },
     // 拒绝
     refuse () {
       const that = this
@@ -763,5 +767,14 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 </style>

@@ -58,6 +58,7 @@
         bordered
         :columns="columns_result"
         :dataSource="result_detailData"
+          :rowClassName="setRowClassName"
         :pagination="false"
         :loading="memberLoading"
         rowKey="key"
@@ -732,6 +733,9 @@ export default {
       })
     },
 
+    setRowClassName(){
+      return 'setRowClassName'
+    },
     txtChange (e) {
       console.log(e)
       this.noted = e.target.value
@@ -793,6 +797,7 @@ export default {
           this.number = true
           data = res.responseObject
           this.handleChangeValue(data.install_project)
+          if (data.install_project === '水力') res.responseObject.details = res.responseObject.details1
           this.dataObj = res.responseObject
           this.serial_number = res.responseObject.serial_number
 
@@ -935,5 +940,14 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 </style>

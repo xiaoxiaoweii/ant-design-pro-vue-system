@@ -163,8 +163,10 @@
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
+            :read-only="col === 'contract_name'"
             :key="col"
             :maxlength="128"
+            :class="col + record.order_number"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -176,6 +178,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -191,6 +194,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -201,6 +205,7 @@
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
@@ -209,6 +214,7 @@
             :key="col"
             :value="text"
             :min="0"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             :step="col === 'price' ? 0.01 : 1"
             v-else-if="record.editable && numberFields.includes(col)"
@@ -1016,7 +1022,7 @@ export default {
       let num = 0
       this.detailData.forEach(x => {
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100
@@ -1055,11 +1061,11 @@ export default {
           // if (target.price) {
 
           if (!(target.amount && target.unit_price_excluding_tax && target.tax_rate)) {
-            target.tax_amount = ''
-            target.money_excluding_tax = ''
-            target.value_tax_total = ''
-            target.contract_add_amount_without_tax = ''
-            target.contract_add_amount = ''
+            target.tax_amount = 0
+            target.money_excluding_tax = 0
+            target.value_tax_total = 0
+            target.contract_add_amount_without_tax = 0
+            target.contract_add_amount = 0
           }
           if (!target.amount) {
             target.amount = 0
@@ -1144,7 +1150,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1152,6 +1158,7 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             console.log(d)
@@ -1159,10 +1166,17 @@ export default {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark' && key != 'purchaser_power') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  console.log(key)
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

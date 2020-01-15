@@ -491,7 +491,7 @@ export default {
     // }
   },
   created () {
-
+    console.log('=================')
   },
   watch: {
     $route (to, from) {

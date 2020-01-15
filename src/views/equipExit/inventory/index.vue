@@ -66,11 +66,8 @@ export default {
       this.currentComponet = 'List'
     },
     $route(to,from) {
-      if (to.path === '/planManagement/rentalList') {
-        if (!this.$store.state.keepaliveArr.includes('/planManagement/rentalList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/planManagement/rentalList')
+      if (to.path === '/equipExit/materialsExitList') {
+        this.reload()
       }
     }
   }

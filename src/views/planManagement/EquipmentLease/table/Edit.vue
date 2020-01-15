@@ -650,8 +650,8 @@ export default {
         '计划租期/工作量',
         '税率(%)',
         '税额',
-        '不含税金额',
-        '含税金额',
+        '不含税总额',
+        '含税总额',
         '备注'
       ],
       columns: [
@@ -789,14 +789,14 @@ export default {
           scopedSlots: { customRender: 'tax_fee' }
         },
         {
-          title: '不含税金额',
+          title: '含税总额',
           dataIndex: 'sum_tax_fee',
           key: 'sum_tax_fee',
           align: 'center',
           scopedSlots: { customRender: 'sum_tax_fee' }
         },
         {
-          title: '含税金额',
+          title: '不含税总额',
           dataIndex: 'sum_with_tax',
           key: 'sum_with_tax',
           align: 'center',
@@ -1203,6 +1203,7 @@ export default {
             d.code =i+1
             d.editable = true
             d.isNew = true
+            this.myNum.push(d.approved_rent_num)
             delete d.approved_alloc_num
             delete d.approved_purchase_num
             delete d.approved_rent_num
@@ -1216,6 +1217,7 @@ export default {
           this.detailData.map(d=>{
             this.srows.push(d.requirement_id)
           })
+
           this.fileList = res.responseObject.files.map(attachment => {
             // if (attachment.type === 0) {
             attachment.uid = attachment.id.toString()
@@ -1399,10 +1401,10 @@ export default {
           x.equipment_code = arr[0].equipment_code
           x.unit = arr[0].equipment_unit
           x.num = arr[0].approved_fictitious_num
-          this.myNum.push(arr[0].approved_fictitious_num)
           x.planned_in_date1 = moment(arr[0].estimated_in_date)
           x.planned_out_date1 = moment(arr[0].estimated_out_date)
           x.requirement_id = arr[0].id
+          this.myNum[i] = (arr[0].approved_fictitious_num)
         }
         return x
       })
@@ -1474,7 +1476,7 @@ export default {
       this.resetForm()
       this.$root.$emit('global::evt.multitabClose', this.$router.currentRoute.fullPath)
       this.$router.push({ path: '/planManagement/equipmentLeaseList' })
-      this.srows = []
+      this.srows = [];this.myNum=[]
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -1641,7 +1643,20 @@ export default {
                   })
                   return
                 }
-              } 
+              }
+            let numbreak = false
+            values.details.map((x,i)=>{
+              if(x.num>this.myNum[i]) {
+                this.$notification['warning']({
+                    message: '提示',
+                    description: `第${i+1}行数量不能超过引入的计划数量`
+                  })
+                  numbreak = true
+                  return
+              }
+            })
+            if(numbreak) return
+            
             values.files = that.fileList.map(x => {
               x.type = 0
               return x

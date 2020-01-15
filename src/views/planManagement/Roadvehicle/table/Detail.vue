@@ -351,13 +351,14 @@ export default {
         '备注'
       ],
       columns: [
-        // {
-        //   title: '使用单位',
-        //   dataIndex: 'use_org_name',
-        //   align: 'center',
-        //   width: '250px',
-        //   scopedSlots: { customRender: 'use_org_name' }
-        // },
+        {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
         {
           title: '扣车局',
           dataIndex: 'buckle_bureau',
@@ -644,9 +645,10 @@ export default {
       if (data.id) {
         await getDeviceList({ id: data.id, menu_id: 18 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
+          this.detailData = res.responseObject.details.map((d,i) => {
             // d.editable = true
             // d.isNew = true
+           d.code = i+1 
            if (d.number==0) d.number=''
             d.key = d.id
 

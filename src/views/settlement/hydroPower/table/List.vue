@@ -437,7 +437,7 @@ export default {
       selectedRows: [],
       orgparam: {
         menu_id: 99,
-        scope_code: this.$store.state.menu_key || 0
+        scope_code: this.$store.state.menu_key
       },
       // custom table alert & rowSelection
       options: {
@@ -525,7 +525,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/settlement/hydroPowerNew' || from.path === '/settlement/hydroPowerEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

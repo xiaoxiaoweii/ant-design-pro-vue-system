@@ -88,19 +88,11 @@
           bordered
         >
             <template v-for="(col, i) in detailFieldsSon" :slot="col" slot-scope="text, record">
-            <!-- <a-input
-              :key="col"
-              maxlengh="128"
-              :placeholder="columnTitleSon[i]"
-              v-if="inputFieldsSon.includes(col)"
-              style="margin: -5px 0"
-              :value="text"
-              @change="e => handleChange(e.target.value, record, col)"
-            /> -->
             <a-input-number
             :key="col"
-            :min="0.0000"
-            :step="0.0001"
+            :value="text"
+            :min="record['previous_num']"
+            step="0.0001"
             :placeholder="columnTitleSon[i]"
             v-if="numberFieldsSon.includes(col)"
             @change="value => handleChange(value, record, col)"
@@ -109,25 +101,18 @@
         </a-table>
 
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
-          <!-- <a-input
-            :key="col"
-            maxlengh="128"
-            :placeholder="columnTitle[i]"
-            v-if="inputFields.includes(col)"
-            style="margin: -5px 0"
-            :value="text"
-            @change="e => handleChange(e.target.value, record, col)"
-          /> -->
           <a-input-number
             :key="col"
-            :min="0.0000"
-            :step="0.0001"
+            :value="text"
+            :min="record['previous_num']"
+            step="0.0001"
             :placeholder="columnTitle[i]"
             v-if="numberFields.includes(col)"
             @change="value => handleChange(value, record, col)"
           />
           <a-input-number
             :key="col"
+            :value="text"
             :min="0.00"
             :step="0.01"
             :placeholder="columnTitle[i]"
@@ -296,8 +281,6 @@ export default {
       activeTabKey: 'attach',
       fileList: [],
       newArr:[],
-      
-      
       memberLoading: false,
       loading: false,
       saveLoading: false,
@@ -423,7 +406,6 @@ export default {
           scopedSlots: { customRender: 'varialoss' }
         },
       ],    
-      
       detailColumnsWater: [
         {
           title: '序号',
@@ -474,7 +456,6 @@ export default {
           scopedSlots: { customRender: 'num' }
         },      
       ], 
-
       columnsSon: [
         {
           title: '序号',
@@ -715,7 +696,6 @@ export default {
           if(res.responseObject.details){
             that.detailData=res.responseObject.details.map((item,index)=>{
               item['order_number']=index+1
-              item['code']
               if(item['details1']){
                 item['details1']=item['details1'].map((child,index2)=>{
                   child['order_number']=index2+1
@@ -725,6 +705,8 @@ export default {
               return item
             })
           }   
+          debugger
+          console.log(that.detailData)
         })   
       }
     },
@@ -740,10 +722,9 @@ export default {
           }else{
             item['previous_num']=parseFloat(item['previous_num'])
           }
-          item['number']=0
-          item['current_num']=0
-          item['line_loss']=0
-          item['varialoss']=0
+          item['current_num']=''
+          item['line_loss']=''
+          item['varialoss']=''
           if(item['num']){
             item['switch_box']=item['num']
             delete item['num']
@@ -763,7 +744,7 @@ export default {
           if(item['details1']){
             item['details1']=item['details1'].map((child,index2)=>{
               child['order_number']=index2+1
-              child['current_num']=0
+              child['current_num']=''
               if(item['use_site']){
                 child['project_name']=child['use_site']
                 delete child['use_site']
@@ -912,15 +893,15 @@ export default {
       }
       setTimeout(() => {
         validateFields((err, values) => {
-          //对明细进行校验
-  
-          values.details = that.detailData
+          values.details=that.detailData
+
           let columns=this.fee_name=='电费'?this.detailColumns:this.detailColumnsWater
+          let detailF=this.fee_name=='电费'?this.detailFields:['current_num']
           let colname=''
           let break1=false
           values.details.map((d,i)=>{
             for(var key in d){
-              if(that.detailFields.includes(key)&&(d[key]==null||d[key]=='')&&key!='remark'){
+              if(detailF.includes(key)&&(d[key]==null||d[key]=='')){
                 columns.map((item)=>{
                   if(item.dataIndex==key){
                     colname=item.title
@@ -928,15 +909,31 @@ export default {
                 })
                 that.$notification['warning']({
                   message:"提示",
-                  description:`提交时第${i+1}行：${colname}不能为空`
+                  description:`提交时第${d.order_number}行：${colname}不能为空`
                 })
                 break1=true
                 return 
+              }else if(!break1&&d['details1']){
+                d['details1'].map(child=>{
+                  if(child.current_num==null||child.current_num==''){
+                    colname='本期读数'
+                    that.$notification['warning']({
+                      message:"提示",
+                      description:`提交时第${d.order_number}行下第第${child.order_number}行：${colname}不能为空`
+                    })
+                    break1=true
+                    return
+                  }
+                })
+              }
+              if(break1){
+                return
               }
             }
           })
 
           if(break1) return
+          
           values.files = that.fileList.map(x => {
             x.type = 0
             return x
@@ -957,6 +954,26 @@ export default {
               delete values[key]
             }
           }
+          values.details.map(item=>{
+            if(item['line_loss']==''){
+               item['line_loss']=0
+            }
+            if(item['varialoss']==''){
+               item['varialoss']=0
+            }
+            if(item['current_num']==''){
+               item['current_num']=0
+            }
+            if(item['details1']){
+              item['details1'].map(child=>{
+                if(child['current_num']==''){
+                  child['current_num']=0
+                }
+              })
+            }
+            return item
+          })
+
           if (!err) {
             if (type === 'submit') {
               this.$confirm({

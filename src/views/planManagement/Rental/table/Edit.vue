@@ -196,48 +196,25 @@
       >新增设备明细</a-button>
     </a-card>
 
-    <!-- <a-modal
+    <a-modal
       class="modal-box"
       title="请选择"
-      v-model="enameVisible"
-      width="40%"
-      @ok="handleEnameOk(selectedRowKeys)"
+      v-model="visible"
+      width="80%"
+      @ok="handleOk(selectedRowKeys)"
+      @cancel="handleCancel()"
     >
-     <a-input :value="valTree2" v-model="input2" placeholder="请输入要查询的名称" @change="valueChange2"/>
-      <ZTree
-        class="ztree1"
-        :setting="settingTree"
-        :nodes="treeData"
-        @onClick="treeClick"
-        @onCheck="onCheck"
-        @onCreated="handleCreated"
-      />
-    </a-modal> -->
-
-    <a-modal class="modal-box" title="请选择" v-model="visible" width="80%" @ok="handleOk" @cancel="handleCancel">
-      <a-row :gutter="8">
-        <a-col :span="5">
-          <a-input :value="valTree" v-model="input1" placeholder="请输入要查询的名称" @pressEnter="valueChange" />
-          <ZTree
-            class="z-tree"
-            :setting="setting"
-            :nodes="dicTree"
-            @onClick="onClick"
-            @onCheck="onCheck"
-            @onCreated="handleCreated"
-          />
-        </a-col>
-        <a-col :span="19">
+      <a-row>
+        <a-col>
           <s-table
-            class="s-table"
             ref="tables"
             size="small"
-            rowKey="code"
+            rowKey="serial"
             bordered
             :columns="demo"
             :data="loadData"
             :alert="false"
-            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
+            :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio' }"
             :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
           >
             <div
@@ -247,6 +224,18 @@
             >
               <!-- 获取自定义栏位相关作用域属性 -->
               {{ setFilterColumnScope({ setSelectedKeys, selectedKeys, confirm, clearFilters, column }) }}
+              <a-range-picker
+                v-if="column.dataIndex === 'request_date'"
+                v-model="range"
+                @change="onChangeDate"
+                style="width: 218px; margin-bottom: 8px; display: block;"
+              />
+              <a-range-picker
+                v-else-if="column.dataIndex === 'production_date'"
+                v-model="checkRange"
+                @change="onChangeCheckDate"
+                style="width: 218px; margin-bottom: 8px; display: block;"
+              />
               <a-input
                 v-if="column.dataIndex === 'equipment_code'"
                 v-model="eqcode"
@@ -254,7 +243,7 @@
                 :placeholder="`${column.title}`"
                 :value="selectedKeys[0]"
                 @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                @pressEnter="() => handleSearch(selectedKeys, confirm)"
+                @pressEnter="() => handleSearch(selectedKeys, confirm,column.dataIndex)"
                 style="width: 188px; margin-bottom: 8px; display: block;"
               />
               <a-input
@@ -264,7 +253,7 @@
                 :placeholder="`${column.title}`"
                 :value="selectedKeys[0]"
                 @change="e => setSelectedKeys(e.target.value ? [e.target.value] : [])"
-                @pressEnter="() => handleSearch(selectedKeys, confirm)"
+                @pressEnter="() => handleSearch(selectedKeys, confirm,column.dataIndex)"
                 style="width: 188px; margin-bottom: 8px; display: block;"
               />
               <a-button
@@ -295,6 +284,8 @@
         </a-col>
       </a-row>
     </a-modal>
+
+    
 
     <!-- file upload and approval record-->
     <a-card
@@ -423,7 +414,7 @@ import STree from '@/components/Tree/Tree'
 import { STable, ZTree } from '@/components'
 import FooterToolBar from '@/components/FooterToolbar'
 import { mixin, mixinDevice } from '@/utils/mixin'
-import { handleRental, exportToExcel,exportToPDF,getDeviceList } from '@/api/planManagement/rental'
+import { handleRental, exportToExcel,exportToPDF,getDeviceList,queryHave } from '@/api/planManagement/rental'
 import {
   uploadUrl,
   getAttachments,
@@ -566,7 +557,7 @@ export default {
         'tax_rate'],
       inputFields: ['supplier_name','supply_scope','facility_position','remark','specification'],
       datePickerFields: [],
-      numberFields: [ 'num'],
+      numberFields: [],
       numberFields2:['date_num','price_without_tax'],
       popconfirmFields: ['name'],
       memberLoading: false,
@@ -607,7 +598,6 @@ export default {
         '承租方',
         '设备名称',
         '规格型号',
-        '数量',
         '单位',
         '租赁方式',
         '计费方式',
@@ -616,8 +606,8 @@ export default {
         '计划租期/工作量',
         '税率（%）',
         '税额',
-        '含税金额',
-        '不含税金额',
+        '含税总额',
+        '不含税总额',
         '备注'
       ],
       columns: [
@@ -649,13 +639,6 @@ export default {
           align: 'center',
           width: '120px',
           scopedSlots: { customRender: 'specification' }
-        },
-        {
-          title: '数量',
-          dataIndex: 'num',
-          align: 'center',
-          width: '90px',
-          scopedSlots: { customRender: 'num' }
         },
         {
           title: '单位',
@@ -714,14 +697,14 @@ export default {
           scopedSlots: { customRender: 'tax_fee' }
         },
         {
-          title: '含税金额',
+          title: '含税总额',
           dataIndex: 'sum_with_tax',
           align: 'center',
           width: '120px',
           scopedSlots: { customRender: 'sum_with_tax' }
         },
         {
-          title: '不含税金额',
+          title: '不含税总额',
           dataIndex: 'sum_tax_fee',
           align: 'center',
           width: '120px',
@@ -748,7 +731,6 @@ export default {
         'supplier_name',
         'name',
         'specification',
-        'num',
         'unit',
         'rent_type',
         'fee_type',
@@ -822,25 +804,23 @@ export default {
             !parameter[key] && Reflect.deleteProperty(parameter, key)
           }
         }
-        if (!this.queryParam.condition.equipmentCategoryCode) {
-          this.queryParam.condition.equipmentCategoryCode = '0'
-        }
-        return queryByEquipment2(this.queryParam).then(res => {
+        
+        return queryHave(Object.assign(parameter,{creator_org_id:this.$store.state.menu_key,menu_id:23}, this.queryParam), 'retrieve').then(res => {
           // 索引
-          res.responseObject.data.current && (this.current = res.responseObject.data.current)
-          this.currentSize = res.responseObject.data.size
+          this.current = res.responsePageInfo.pageNum
+          this.currentSize = res.responsePageInfo.pageSize
           this.tableData = res
-          res.responseObject.data.records.forEach((x, i) => {
+          res.responsePageInfo.list.forEach((x, i) => {
             x.serial = i + 1
           })
 
           return (
             res.result || {
-              pageSize: res.responseObject.data.size,
-              pageNo: res.responseObject.data.current,
-              totalPage: res.responseObject.data.pages,
-              totalCount: res.responseObject.data.total,
-              data: res.responseObject.data.records
+              pageSize: res.responsePageInfo.pageSize,
+              pageNo: res.responsePageInfo.pageNum,
+              totalPage: res.responsePageInfo.pages,
+              totalCount: res.responsePageInfo.total,
+              data: res.responsePageInfo.list
             }
           )
         })
@@ -876,61 +856,40 @@ export default {
         },
         {
           title: '机械设备名称',
-          dataIndex: 'equipmentName',
+          dataIndex: 'equip_name',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'equipmentName'
+            customRender: 'equip_name'
           },
-          onFilter: (value, record) => record.equipmentName.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          onFilter: (value, record) => record.equip_name.toLowerCase().includes(value.toLowerCase()),
+         
         },
         {
           title: '规格型号',
-          dataIndex: 'specificationModel',
+          dataIndex: 'specification',
           width: '140px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'specification'
           },
-          onFilter: (value, record) => record.specificationModel.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          onFilter: (value, record) => record.specification.toLowerCase().includes(value.toLowerCase()),
+          
         },
         {
           title: '机械设备编码',
-          dataIndex: 'equipmentCode',
+          dataIndex: 'equip_code',
           width: '140px',
           scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
-            customRender: 'customRender'
+            customRender: 'equip_code'
           },
-          onFilter: (value, record) => record.equipmentCode.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: visible => {
-            if (visible) {
-              setTimeout(() => {
-                this.searchInput.focus()
-              }, 0)
-            }
-          }
+          
         },
         {
           title: '单位',
           width: '120px',
-          dataIndex: 'calculateUnit',
+          dataIndex: 'unit',
           scopedSlots: {
             customRender: 'customRender'
           }
@@ -981,11 +940,7 @@ export default {
     this.isrequired = true
     // this.params = this.$route.params
     this.queryParam = {
-      current: 1,
-      size: 20,
-      condition: {
-        organCode: '0000100002'
-      }
+      
     }
   },
   methods: {
@@ -1054,24 +1009,6 @@ export default {
     },
     showModal (selectedRowKeys, col, key, record) {
       this.visible = true
-      this.axios
-        .post(
-          '/selectCategory',
-          {
-            condition: {
-              organCode: '0000100002'
-            }
-          },
-          { headers: { 'Content-Type': 'application/json' } }
-        )
-        .then(res => {
-          let arr1 = res.responseObject.data.map(d => {
-            if (d.parentCode === null) d.parentCode = 0
-            return d
-          })
-          this.dicTree = arr1
-          this.dicTree2 = arr1
-        })
       this.handleData.col = col
       this.handleData.key = key
       this.handleData.record = record     
@@ -1126,29 +1063,7 @@ export default {
       const { column } = data
       this.customFilterColumn[column.dataIndex] = data
     },
-    valueChange (e) {
-      this.dicTree = this.dicTree2
-      this.valTree = e.target.value
-      if (this.valTree == '') this.dicTree = this.dicTree2
-      let arr1 = []
-      for (let i = 0; i < this.dicTree.length; i++) {
-        if (this.dicTree[i].categoryName.indexOf(this.valTree) != -1) {
-          arr1.push(this.dicTree[i])
-        }
-      }
-      this.dicTree = arr1
-    },
-    valueChange2(e) {
-      this.valTree2 = e.target.value
-      queryAssetsCategory({ assets_type_name: this.valTree2 }).then(res => (this.treeData = res.responseList))
-    },
-    
-    onClick: function(evt, treeId, treeNode) {
-      // 点击事件
-      this.queryParam.condition.equipmentCategoryCode = treeNode.categoryCode
-      this.myEquipment_code = treeNode.equipment_code
-      this.$refs.tables.refresh(true)
-    },
+   
     onCheck: function(evt, treeId, treeNode) {
       // 选中事件
     },
@@ -1180,12 +1095,7 @@ export default {
         return
       }
       this.visible = false
-      let arrIndex = 0
-      this.tableData.responseObject.data.records = this.tableData.responseObject.data.records.map(d => {
-        d.id = arrIndex
-        arrIndex++
-        return d
-      })
+     
       const arr = this.selectedRows
       this.selectedRowKeys = []
       this.selectedRows = []
@@ -1194,30 +1104,22 @@ export default {
       
       this.detailData = this.detailData.map((x, i) => {
         if (x.key === this.handleData.key) {
-          x.name = arr[0].equipmentName
-          x.specification = arr[0].specificationModel
-          x.unit = arr[0].calculateUnit
-          x.equipment_code = arr[0].equipmentCategoryCode
+          x.name = arr[0].equip_name
+          x.specification = arr[0].specification
+          x.unit = arr[0].unit
+          x.equipment_code = arr[0].equip_code
         }
         return x
       })
       this.queryParam = {
-        current: 1,
-        size: 20,
-        condition: {
-          organCode: '0000100002'
-        }
+        
       }
       this.refresh(true)
       this.input1 = ''
     },
     handleCancel () {
       this.queryParam = {
-        current: 1,
-        size: 20,
-        condition: {
-          organCode: '0000100002'
-        }
+        
       }
       this.refresh(true)
       this.input1 = ''
@@ -1283,8 +1185,6 @@ export default {
     handleGetInfo() {},
     
     newDevice() {
-      // this.visible = true
-      // queryAllEquipment().then(res => (this.dicTree = res.responseList))
 
       const length = this.detailData.length
       if (length > 0 && !this.detailData[this.detailData.length - 1].name) return this.noSelect('请填完上一条数据')
@@ -1297,7 +1197,6 @@ export default {
         supplier_name: '',
         name: '',
         specification: '',
-        num: '',
         unit: '',
         rent_type: '',
         fee_type: '',
@@ -1335,15 +1234,15 @@ export default {
           if (isNaN(target.price_with_tax)) target.price_with_tax = ''
           target.price_with_tax = (target.price_without_tax * (1 + target.tax_rate / 100)).toFixed(2)
         }
-        target.tax_fee = isNaN(((target.num * target.price_without_tax * target.tax_rate * target.date_num) / 100).toFixed(2))?'':((target.num * target.price_without_tax * target.tax_rate * target.date_num) / 100).toFixed(2)
+        target.tax_fee = isNaN((( target.price_without_tax * target.tax_rate * target.date_num) / 100).toFixed(2))?'':((target.price_without_tax * target.tax_rate * target.date_num) / 100).toFixed(2)
         if (isNaN(target.price_with_tax)) target.price_with_tax = ''
         if (isNaN(target.tax_fee)) target.tax_fee = ''
 
         if (isNaN(target.sum_with_tax)) target.sum_with_tax = ''
-        target.sum_with_tax = isNaN((target.num * target.price_with_tax*target.date_num).toFixed(2))?'':(target.num * target.price_with_tax*target.date_num).toFixed(2)
+        target.sum_with_tax = isNaN((target.price_with_tax*target.date_num).toFixed(2))?'':(target.price_with_tax*target.date_num).toFixed(2)
 
         if (isNaN(target.sum_tax_fee)) target.sum_tax_fee = ''
-        target.sum_tax_fee = isNaN((target.price_without_tax * target.num*target.date_num).toFixed(2))?'':(target.price_without_tax * target.num*target.date_num).toFixed(2)
+        target.sum_tax_fee = isNaN((target.price_without_tax * target.date_num).toFixed(2))?'':(target.price_without_tax*target.date_num).toFixed(2)
 
         this.detailData = newData
       }
@@ -1563,7 +1462,8 @@ export default {
 
     handleReset(clearFilters, col) {
       clearFilters()
-      this.queryParam.condition.equipmentCategoryCode = this.myEquipment_code
+      this.queryParam={}
+      this.$refs.tables.refresh(true)
     },
 
     resetForm() {

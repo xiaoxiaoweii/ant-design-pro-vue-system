@@ -10,10 +10,19 @@ const api = {
   commit: '/equipmentHire/submit',
   update: '/equipmentHire/update',
   approve:'/equipmentHire/approve',
-  refuse:'/equipmentHire/reject'
+  refuse:'/equipmentHire/reject',
+  queryHave:'/equipmentHire/queryHave'
 }
 
 export default api
+
+export function queryHave(parameter) {
+  return axios({
+    url:api.queryHave,
+    method:'get',
+    params:parameter
+  })
+}
 
 export function handleApprove(data) {
   return axios({

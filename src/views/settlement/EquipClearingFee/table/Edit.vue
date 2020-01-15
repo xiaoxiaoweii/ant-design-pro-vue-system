@@ -152,6 +152,7 @@
           <a-input
             :key="col"
             :maxlength="128"
+            :class="col + record.order_number"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -163,6 +164,7 @@
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             @change="value => handleChange(value, record.key, col)"
           >
@@ -175,6 +177,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -185,6 +188,7 @@
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
@@ -192,6 +196,7 @@
             :key="col"
             :value="text"
             :min="0"
+            :class="col + record.order_number"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :placeholder="columnTitle[i]"
             :step="col === 'price' ? 0.01 : 1"
@@ -751,6 +756,8 @@ export default {
           x.isNew = true
           x.key = i + 1
           x.order_number = i + 1
+          x.amount_paid = ''
+          x.amount_in_arrears = ''
           return x
         })
         if (this.detailData.length) this.detailData.push({
@@ -1040,22 +1047,6 @@ export default {
         target[column] = value
 
         if (['amount_paid', 'amount_in_arrears'].includes(column)) {
-          // if (target.price) {
-          // if (target.deductions_money) {
-          //   const number = target.planned_quantity * target
-          //     .rent_price_monthly
-          //   target.deductions_money = target.deductions_money > number ? target.number : target.deductions_money
-          // }
-
-          // 判断单价 置空结算数据
-          if (!target.amount_paid) {
-            target.amount_paid = 0
-          }
-
-          // 判断数量 置空结算数据
-          if (!target.amount_in_arrears) {
-            target.amount_in_arrears = 0
-          }
 
           if (target.amount && target.unit_price_excluding_tax) {
 
@@ -1063,7 +1054,7 @@ export default {
             target.money_excluding_tax = parseInt(target.unit_price_excluding_tax * target.amount * 100) / 100
 
             // 税额
-            target.tax_amount = parseInt(target.unit_price_excluding_tax * target.tax_rate * target.amount) / 100
+            target.tax_amount = parseInt(target.unit_price_excluding_tax * target.tax_rate * target.amount * 100) / 100
 
             // 结算金额 含税
             target.value_tax_total = parseInt((target.unit_price_excluding_tax * target.tax_rate / 100 + target.unit_price_excluding_tax) * 100 * target.amount) / 100
@@ -1137,6 +1128,44 @@ export default {
         this.isrequired = false
       } else {
         this.isrequired = true
+        if (this.detailData.length === 0) {
+          this.$notification['warn']({
+            message: '提示',
+            description: '提交时明细不能为空'
+          })
+          return
+        }
+        let break1 = false
+        let colname = ''
+        let keyname = ''
+        this.detailData.forEach((d, i) => {
+          if (d.order_number !== '合计') {
+            for (var key in d) {
+              if (!d[key] && d[key] !== 0) {
+                if (key != 'remark') {
+                  this.columns.map(item => {
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
+                  })
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
+                    message: '提示',
+                    description: `提交时第${d.order_number}行：${colname}不能为空`
+                  })
+                  break1 = true
+                  return
+                }
+              }
+            }
+          }
+        })
+        if (break1) return
       }
       setTimeout(() => {
         validateFields((err, values) => {

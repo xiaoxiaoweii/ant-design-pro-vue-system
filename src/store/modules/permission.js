@@ -1,6 +1,6 @@
-import { asyncRouterMap, constantRouterMap } from '@/config/router.config'
-// import { constantRouterMap } from '@/config/router.config'
-// import { generatorDynamicRouter } from '@/utils/routerUtil'
+
+import { constantRouterMap } from '@/config/router.config'
+import { generatorDynamicRouter } from '@/utils/routerUtil'
 
 const permission = {
   state: {
@@ -23,10 +23,10 @@ const permission = {
      */
     GenerateRoutes ({ commit }, data) {
       return new Promise(resolve => {
-        const { roles } = data
-        const accessedRouters = asyncRouterMap
-        commit('SET_ROUTERS', asyncRouterMap)
-        resolve()
+        generatorDynamicRouter(data).then(routers => {
+          commit('SET_ROUTERS', routers)
+          resolve()
+        })
       })
     }
   }

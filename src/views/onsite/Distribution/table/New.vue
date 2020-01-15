@@ -471,7 +471,7 @@ export default {
           scopedSlots: { customRender: 'spec' }
         },
         {
-          title: '单价(元)',
+          title: '含税单价',
           dataIndex: 'single_price',
           key: 'single_price',
           align: 'right',
@@ -495,7 +495,7 @@ export default {
           scopedSlots: { customRender: 'num' }
         },
         {
-          title: '总价(元)',
+          title: '含税总额',
           dataIndex: 'sum',
           key: 'sum',
           width: '60px',
@@ -727,7 +727,7 @@ export default {
           }
         },
         {
-          title: '单价(元)',
+          title: '含税单价',
           dataIndex: 'price_with_tax',
           align: 'right',
           scopedSlots: {
@@ -781,7 +781,7 @@ export default {
           }
         },
         {
-          title: '总价(元)',
+          title: '含税总额',
           dataIndex: 'fee_whithout_tax',
           align: 'right',
           scopedSlots: {
@@ -962,9 +962,8 @@ export default {
           item['sum']=item['fee_whithout_tax']
           item['num']=item['number']
           item['materId']=item['id']  //将id转为metetID
-          item['num']=item['number']
-          item['use_site']=item['rec_org']
-          item['usr_org']=item['equip']
+          item['use_site']=item['equip']
+          item['usr_org']=item['rec_org']
           return item
         })
         this.selectedRowKeys = []

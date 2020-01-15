@@ -150,6 +150,7 @@
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
+            :class="col + record.order_number"
             :key="col"
             :read-only="col === 'name'"
             :maxlength="128"
@@ -164,6 +165,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -179,6 +181,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -193,6 +196,7 @@
             @change="value => handleChange(value, record.key, col)"
           />
           <a-input-number
+            :class="col + record.order_number"
             :key="col"
             :value="text"
             :min="0"
@@ -1036,45 +1040,27 @@ export default {
         target[column] = value
 
         if (['quantity', 'price', 'amortization_period', 'months_amortized'].includes(column)) {
-          // if (target.price) {
           if (target.amortization_period && target.months_amortized) {
             target.months_amortized = target.amortization_period > target.months_amortized ? target.months_amortized : target.amortization_period
           }
-
-          // if (!target.quantity && target.quantity !== 0) {
-          //   target.quantity = 0
-          //   target.original_value = 0
-          //   target.net_value = 0
-          //   target.amortized_amount = 0
-          //   target.month_amortized_amount = 0
-          // }
-
-          // if (!target.amortization_period && target.amortization_period !== 0) {
-          //   target.amortization_period = 0
-          //   target.month_amortized_amount = 0
-          //   target.amortized_amount = 0
-          // }
-
-          // if (!target.months_amortized && target.months_amortized !== 0) {
-          //   target.months_amortized = 0
-          //   target.amortized_amount = 0
-          //   target.net_value = 0
-          // }
-          const quantity = quantity || 0
-          const amortization_period = amortization_period || 0
-          const months_amortized = months_amortized || 0
+          const price = target.price || 0
+          const quantity = target.quantity || 0
+          const amortization_period = target.amortization_period || 0
+          const months_amortized = target.months_amortized || 0
 
           // 原值
-          target.original_value = parseInt(target.price * quantity * 100) / 100
+          target.original_value = parseInt(price * quantity * 100) / 100 || ''
 
-          // 本月摊销金额
-          target.month_amortized_amount = parseInt(target.price * quantity / amortization_period * 100) / 100
+          if (target.original_value && amortization_period) {
+            // 本月摊销金额
+            target.month_amortized_amount = parseInt(target.original_value / amortization_period * 100) / 100
 
-          // 已摊销金额
-          target.amortized_amount = parseInt(target.price * quantity / amortization_period * months_amortized * 100) / 100
+            // 已摊销金额
+            target.amortized_amount = parseInt(target.month_amortized_amount * months_amortized * 100) / 100
 
-          // 净值
-          target.net_value = parseInt((target.price * quantity - target.amortized_amount) * 100) / 100
+            // 净值
+            target.net_value = parseInt((target.original_value - target.amortized_amount) * 100) / 100
+          }
 
           const arr = ['amortization_period', 'price', 'quantity', 'original_value', 'month_amortized_amount', 'months_amortized', 'amortized_amount', 'net_value']
           arr.map(x => {
@@ -1138,23 +1124,33 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
           return
         }
+            // :class="col + record.order_number"
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.order_number}`)) {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

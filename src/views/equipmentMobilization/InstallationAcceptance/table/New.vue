@@ -433,6 +433,7 @@
     <a-card class="card" title="验收内容">
       <a-table
         :columns="columns"
+          :rowClassName="setRowClassName"
         :dataSource="detailData"
         :pagination="false"
         :loading="memberLoading"
@@ -444,6 +445,7 @@
             :key="col"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
+            :class="col + record.code"
             :value="text"
             @change="e => handleChange(e.target.value, record.key, col)"
           />
@@ -462,6 +464,7 @@
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.code"
             :min="0"
             :step="col === 'num' ? 1 : 0.01"
             v-else-if="record.editable && numberFields.includes(col)"
@@ -1048,7 +1051,14 @@ export default {
       if (from.path === '/equipmentMobilization/InstallationAcceptanceList') {
         this.isrequired = true
         this.$nextTick(() => {
-          this.loadEditInfo(this.recording)
+          queryAllName().then(res => (this.name_dicTree = [res.responseObject]))
+          queryDictionaries({ dic_type_id: 1012 }).then(res => {
+            this.queryLevel = res.responseList.map(x => {
+              x.label = x.dic_enum_name
+              x.value = x.dic_enum_name
+              return x
+            })
+          })
         })
       }
     }
@@ -1058,7 +1068,14 @@ export default {
       equipment_code: '0'
     }
     this.$nextTick(() => {
-      this.loadEditInfo(this.recording)
+      queryAllName().then(res => (this.name_dicTree = [res.responseObject]))
+      queryDictionaries({ dic_type_id: 1012 }).then(res => {
+        this.queryLevel = res.responseList.map(x => {
+          x.label = x.dic_enum_name
+          x.value = x.dic_enum_name
+          return x
+        })
+      })
     })
   },
   computed: {
@@ -1488,6 +1505,9 @@ export default {
       this.selectedRowKeys = selectedRowKeys
       this.selectedRows = selectedRows
     },
+    setRowClassName(){
+      return 'setRowClassName'
+    },
     // 重置页面数据
     resetForm () {
       this.form.resetFields()
@@ -1508,16 +1528,7 @@ export default {
     },
     loadEditInfo (data) {
       const { form } = this
-      queryAllName().then(res => (this.name_dicTree = [res.responseObject]))
-      queryDictionaries({ dic_type_id: 1012 }).then(res => {
-        this.queryLevel = res.responseList.map(x => {
-          x.label = x.dic_type_name
-          x.value = x.dic_type_name
-          return x
-        })
-      })
-      console.log(`将加载 ${data.id} 信息到表单`)
-      if (data.id) {
+      if (data && data['id']) {
         queryone({ id: data.id }).then(res => {
           console.log("一查三", res)
           this.number = true
@@ -1870,5 +1881,13 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 </style>

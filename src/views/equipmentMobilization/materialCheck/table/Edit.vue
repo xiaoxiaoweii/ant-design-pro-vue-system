@@ -229,6 +229,7 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
+            :class="col + record.code"
             :maxlength="128"
             :placeholder="columns[i].title"
             v-if="record.editable && inputFields.includes(col)"
@@ -240,6 +241,7 @@
             read-only
             :key="col"
             :maxlength="128"
+            :class="col + record.code"
             :placeholder="columns[i].title"
             v-else-if="record.editable && col === 'name'"
             style="margin: -5px 0"
@@ -249,6 +251,7 @@
           />
           <a-select
             :key="col"
+            :ref="col + record.code"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -262,6 +265,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+            :class="col + record.code"
             :value="text"
             :placeholder="columns[i].title"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -269,6 +273,7 @@
           />
           <a-input-number
             :key="col"
+            :class="col + record.code"
             :value="text"
             :max="col === 'num' ? 999999999.99 : 999999999.99"
             :min="col === 'num' ? 0.00 : 0.00"
@@ -1403,6 +1408,7 @@ export default {
       this.selectedRows = []
       if (!arr.length) return
       if (val.length > 1) return this.noSelect()
+      this.detailData = []
       this.contract_code = arr[0].contract_code
       this.form.setFieldsValue({
         contract_no: arr[0].contract_code,
@@ -1596,27 +1602,10 @@ export default {
             })
           }
         })
-        // getAttachments({ id_in_module: data.id, module: modules.materialCheck }).then(res => {
-        //   this.fileList = res.responseList.map(attachment => {
-        //     attachment.uid = attachment.id.toString()
-        //     attachment.status = 'done'
-        //     attachment.url = ''
-        //     attachment.key = attachment.id.toString()
-        //     attachment.name = attachment.file_name
-        //     attachment.size = attachment.file_size.toString()
-        //     attachment.file_size = attachment.file_size.toString()
-        //     attachment.upload_user_id = attachment.upload_user_id.toString()
-        //     attachment.username = attachment.upload_user_name
-        //     return attachment
-        //   })
-        // })
         this.detailData = this.detailData.map((item, index) => {
           item.code = index
           return item
         })
-        // setTimeout(()=>{
-        //   form.setFieldsValue(formData)
-        // },100)
       }
     },
     newDevice () {
@@ -1798,7 +1787,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1806,15 +1795,27 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.code !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.code} input`)) {
+                    document.querySelector(`.${keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code}`)) {
+                    document.querySelector(`.${keyname + d.code}`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code} .ant-select-selection__rendered`)) {
+                    console.log(this.$refs[keyname + d.code])
+                    this.$refs[keyname + d.code].click()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.code}行：${colname}不能为空`
                   })

@@ -463,7 +463,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/planManagement/requireNew' || from.path === '/planManagement/requireEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

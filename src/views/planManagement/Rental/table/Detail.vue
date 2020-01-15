@@ -346,6 +346,7 @@ export default {
         '租赁方式',
         '计费方式',
         '不含税单价',
+        '含税单价',
         '计划租期/工作量',
         '税率（%）',
         '税额',
@@ -354,7 +355,14 @@ export default {
         '备注'     
     ],
       columns: [
-        
+        {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
         {
           title: '承租方',
           dataIndex: 'supplier_name',
@@ -410,6 +418,13 @@ export default {
           align: 'center',
           width: '160px',
           scopedSlots: { customRender: 'price_without_tax' }
+        },
+        {
+          title: '含税单价',
+          dataIndex: 'price_with_tax',
+          align: 'center',
+          width: '160px',
+          scopedSlots: { customRender: 'price_with_tax' }
         },
         {
           title: '计划租期/工作量',
@@ -666,7 +681,8 @@ export default {
 
       if (data.id) {
         await getDeviceList({ id: data.id, menu_id: 23 }).then(res => {
-          this.detailData = res.responseObject.details.map(d => {
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code = i+1
             d.editable = true
             d.isNew = true
             d.key = d.id

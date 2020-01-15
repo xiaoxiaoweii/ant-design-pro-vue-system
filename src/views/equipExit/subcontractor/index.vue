@@ -16,7 +16,7 @@ import List from '@/views/equipExit/subcontractor/table/List'
 import Edit from '@/views/equipExit/subcontractor/table/Edit'
 import Detail from '@/views/equipExit/subcontractor/table/Detail'
 export default {
-  name: 'PlanExitList',
+  name: 'subcontractorExitList',
   components: {
     List,
     Edit,
@@ -67,11 +67,12 @@ export default {
         this.reload()
     },
     $route (to, from) {
-      if (to.path === '/leaseOut/leaseOutList') {
-        if (!this.$store.state.keepaliveArr.includes('/leaseOut/leaseOutList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/leaseOut/leaseOutList')
+      if (to.path === '/leaseOut/subcontractorExitList') {
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/leaseOut/leaseOutList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/leaseOut/leaseOutList')
       }
     }
 

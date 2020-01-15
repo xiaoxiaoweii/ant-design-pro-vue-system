@@ -445,7 +445,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (to.path === '/equipmentMobilization/vehicleLedger') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

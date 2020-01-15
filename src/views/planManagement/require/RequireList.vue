@@ -12,7 +12,7 @@
       :recording="record"
       :is="currentComponet"
     ></component>
-  </a-card> 
+  </a-card>
 </template>
 
 <script>
@@ -87,12 +87,14 @@ export default {
     },
     $route(to, from) {
       if (to.path === '/planManagement/requireList') {
-        if (!this.$store.state.keepaliveArr.includes('/planManagement/requireList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/planManagement/requireList')
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/planManagement/requireList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/planManagement/requireList')
       }
     }
+
   }
 }
 </script>

@@ -202,6 +202,7 @@
           <a-input
             :key="col"
             :maxlength="128"
+            :class="col + record.order_number"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -210,6 +211,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -225,6 +227,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -234,6 +237,7 @@
             show-time
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -241,6 +245,7 @@
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :min="0"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :placeholder="columnTitle[i]"
@@ -1134,7 +1139,7 @@ export default {
           x[attr] = 0
         }
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100
@@ -1277,7 +1282,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1285,6 +1290,7 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             console.log(d)
@@ -1292,10 +1298,17 @@ export default {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
-                    colname = colname === '税额' ? '不含税单价' : colname
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

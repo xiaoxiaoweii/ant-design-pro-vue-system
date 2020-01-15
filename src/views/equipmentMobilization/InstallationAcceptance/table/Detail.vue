@@ -25,6 +25,7 @@
       <a-table
         :columns="columns"
         :dataSource="detailData"
+          :rowClassName="setRowClassName"
         :pagination="false"
         :loading="memberLoading"
         rowKey="key"
@@ -428,6 +429,10 @@ export default {
       this.sumData[0]['check_remarks'] = ''
       this.sumData[0]['check_result'] = ''
     },
+
+    setRowClassName(){
+      return 'setRowClassName'
+    },
     loadEditInfo (data) {
       const { form } = this
       console.log(data)
@@ -520,6 +525,14 @@ export default {
     padding: 0;
     overflow: auto;
   }
+}
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 .antd-pro-pages-forms-style-errorIcon {
   user-select: none;

@@ -128,6 +128,7 @@
         :columns="Subcontracto_data"
         :data="loadTable"
         :alert="false"
+        :customRow="handleCustomRow"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
         :pagination="{showSizeChanger: true, pageSizeOptions: ['13', '26', '39'], showQuickJumper: true, showTotal: total => `共 ${total} 条`}"
       >
@@ -172,7 +173,7 @@
           slot-scope="text, record, index"
         >{{ index + 1 + (current - 1) * currentSize }}</span>
         <span slot="supType" slot-scope="text">{{ text }}</span>
-       <ellipsis slot="supName" slot-scope="text" :length="20" tooltip>
+       <ellipsis slot="supName" slot-scope="text" :length="40" tooltip>
         {{ text }}
       </ellipsis>
       </s-table>
@@ -387,7 +388,7 @@ export default {
       selectFields: [],
       inputFields: ['remark'],
       datePickerFields: [],  
-      numberFields: ['quota_consumption','above_amount','deduction_amount','price'],
+      numberFields: ['actual_consumption', 'quota_consumption','price'],
       memberLoading: false,
       loading: false,
       saveLoading: false,
@@ -639,7 +640,7 @@ export default {
         {
           title: '分包商名称',
           dataIndex: 'supName',
-          width: '150px',
+          width: '200px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -659,8 +660,6 @@ export default {
           dataIndex: 'legalPersonName',
           width: '100px',
           scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
             customRender: 'legalPersonName'
           }
         },
@@ -701,6 +700,43 @@ export default {
   },
   methods: {
     ...mapGetters(['nickname']),
+    handleCustomRow(record, index) {
+      return {
+        on: {
+          dblclick: () => {
+            
+            this.form.setFieldsValue({
+              subcontractor_name: record.supName
+            })  
+            this.subcontractor_code = record.socialId
+
+            // let keys = [];
+            // keys.push(record.socialId); 
+            // this.selectedRowKeys = keys;
+
+            // 获取分包商最新核算的结束日期
+            querySubcontractoEndDate({
+                subcontractor_code: record.socialId,
+                creator_org_id:this.$store.state.menu_key
+            }).then(res => {
+                if (res.responseObject !== null) {
+                    this.form.setFieldsValue({
+                        deduction_start_date: moment(res.responseObject.deduction_end_date,'YYYY-MM-DD').add(1,'days')
+                    })
+                } else {
+                    this.form.setFieldsValue({
+                        deduction_start_date: null,
+                        deduction_end_date: null
+                    })
+                    this.isDeductionStartDate = false
+                }
+                this.loadEditInfo(res)
+            })
+            this.visible_name = false
+          }
+        }
+      }
+    },
     handleGoBack () {
       this.resetForm()
       this.$root.$emit('global::evt.multitabClose', this.$router.currentRoute.fullPath)
@@ -891,7 +927,6 @@ export default {
             return
         }
 
-        console.log(res,'///////////////')
         if (res.id !== undefined) {
           this.infoId = res.id;
         } else if (res.responseList == undefined && res.responseObject !== null){
@@ -1022,12 +1057,29 @@ export default {
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
         target[column] = value
-        if (['actual_consumption', 'price'].includes(column)) {
+        if (['actual_consumption', 'quota_consumption','price'].includes(column)) {
+          target.deduction_amount = ''
+
+          if (isNaN(target.actual_consumption)) {
+            target.actual_consumption = '';
+          }
+
+          if (isNaN(target.quota_consumption)) {
+            target.quota_consumption = '';
+          }
+          
+          if (target.actual_consumption !== '' && target.quota_consumption !== '') {
+            target.above_amount = target.actual_consumption - target.quota_consumption
+          }
+
+          if (target.above_amount < 0) {
+            target.above_amount = 0;
+          }
           target.deduction_amount= (target.actual_consumption *target.price).toFixed(2)
           if (isNaN(target.deduction_amount)) {
               target.deduction_amount = ''
           } else {
-            target.deduction_amount = target.actual_consumption *target.price
+            target.deduction_amount = (target.actual_consumption *target.price).toFixed(2)
           }
         }
 

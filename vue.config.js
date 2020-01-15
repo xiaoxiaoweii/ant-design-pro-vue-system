@@ -70,7 +70,7 @@ const vueConfig = {
   },
 
   devServer: {
-    port: 7000,
+    port: 8000,
     proxy: {
       '/business': {
         target: 'http://192.168.40.202:33102',

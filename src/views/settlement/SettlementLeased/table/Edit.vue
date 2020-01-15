@@ -173,6 +173,7 @@
           <a-input
             :key="col"
             :maxlength="128"
+            :class="col + record.order_number"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -181,6 +182,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -195,6 +197,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -205,6 +208,7 @@
             show-time
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -212,6 +216,7 @@
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :min="0"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :placeholder="columnTitle[i]"
@@ -896,6 +901,13 @@ export default {
           x.rent_type = '月租'
           x.fee_type = '月'
           x.tax_rate = 6
+          x.settlement_start_time1 = null
+          x.settlement_end_time1 = null
+          x.planned_quantity = ''
+          x.other_fees = ''
+          x.other_fees_cost = ''
+          x.deductions_money = ''
+          x.deductions_money_cost = ''
           x.unit_price_excluding_tax = parseInt(x.rent_price_monthly * 100 / (x.tax_rate + 100) * 100) / 100
           getAmount({ contract_code: x.contract_code }).then(res => {
             x.sumObj = res.responseObject
@@ -1168,69 +1180,34 @@ export default {
         target[column] = value
 
         if (['planned_quantity', 'rent_price_monthly', 'other_fees', 'deductions_money', 'tax_rate'].includes(column)) {
-          // if (target.price) {
+          const rent = target.rent_price_monthly || 0
+          const rate = target.tax_rate || 0
+          const planned_quantity = target.planned_quantity || 0
+          const other_fees = target.other_fees || 0
+          const deductions_money = target.deductions_money || 0
 
-          let rent = target.rent_price_monthly || 0
-          let rate = target.tax_rate || 0
-          console.log(target.rent_price_monthly, '122122', rent, rate)
+          // 其他费用减去扣款
+          const calc = parseInt(other_fees * 100 - deductions_money * 100) / 100
+          // 不含税单价
+          target.unit_price_excluding_tax = parseInt(rent * 100 / (100 + rate) * 100) / 100
+          // 结算金额 不含税
+          target.settlement_amount_excluding_tax = parseInt(target.unit_price_excluding_tax * planned_quantity * 100 + calc * 100) / 100
+          // 结算金额 含税
+          target.settlement_amount = parseInt(rent * 100 * planned_quantity + calc * 100) / 100
+          // 开累结算金额 不含税
+          target.contract_add_amount_without_tax = parseInt(target.settlement_amount_excluding_tax * 100 + target.sumObj.contract_add_amount_without_tax * 100) / 100
+          // 开累结算金额 含税
+          target.contract_add_amount = parseInt(target.settlement_amount * 100 + target.settlement_amount * 100) / 100
 
-          target.unit_price_excluding_tax = parseInt(rent * 100 / (100 + rate * 1) * 100) / 100
-
-          if (target.deductions_money) {
-            const number = target.planned_quantity * target
-              .unit_price_excluding_tax
-            target.deductions_money = target.deductions_money > number ? target.number : target.deductions_money
-          }
-
-          // 判断租期 置空结算数据
-          if (!target.planned_quantity) {
-            target.settlement_amount_excluding_tax = 0
-            target.settlement_amount = 0
-            target.contract_add_amount_without_tax = 0
-            target.contract_add_amount = 0
-          }
-
-          if (!target.planned_quantity) {
-            target.planned_quantity = 0
-          }
-
-          target.other_fees = target.other_fees || target.other_fees === 0 ? target.other_fees : 0
-          target.deductions_money = target.deductions_money || target.deductions_money === 0 ? target.deductions_money : 0
-
-          if (target.planned_quantity) {
-            // 判断租期工作量 计算总额
-
-            // 结算金额 不含税
-            target.settlement_amount_excluding_tax = parseInt(target.unit_price_excluding_tax * target.planned_quantity * 100) / 100
-
-            // 结算金额 含税
-            target.settlement_amount = parseInt(rent * target.planned_quantity * 100) / 100
-
-            if (target.other_fees) {
-              // 结算金额 不含税
-              target.settlement_amount_excluding_tax = parseInt(target.settlement_amount_excluding_tax * 100 + target.other_fees * 100) / 100
-
-              // 结算金额 含税
-              target.settlement_amount = parseInt(target.settlement_amount * 100 + target.other_fees * (100 + rate)) / 100
-            }
-
-            if (target.deductions_money) {
-              // 结算金额 不含税
-              target.settlement_amount_excluding_tax = parseInt(target.settlement_amount_excluding_tax * 100 - target.deductions_money * 100) / 100
-
-              // 结算金额 含税
-              target.settlement_amount = parseInt(target.settlement_amount * 100 - target.deductions_money * (100 + rate)) / 100
-            }
-
-            // 开累结算金额 不含税
-            target.contract_add_amount_without_tax = parseInt(target.sumObj.contract_add_amount_without_tax * 100 + target.settlement_amount_excluding_tax.toFixed(2) * 100) / 100
-
-            // 开累结算金额 含税
-            target.contract_add_amount = parseInt(target.settlement_amount * 100 + target.sumObj.contract_add_amount.toFixed(2) * (100 + rate)) / 100
-          }
-
-          const arr = ['rent_price_monthly', 'planned_quantity',
-            'unit_price_excluding_tax', 'other_fees', 'deductions_money', 'settlement_amount_excluding_tax', 'settlement_amount', 'contract_add_amount_without_tax', 'contract_add_amount']
+          const arr = [
+            'planned_quantity',
+            'other_fees', 
+            'deductions_money', 
+            'settlement_amount_excluding_tax', 
+            'settlement_amount',
+            'contract_add_amount_without_tax',
+            'contract_add_amount'
+          ]
           arr.map(x => {
             newData.forEach(d => {
               if (d.order_number === '合计') {
@@ -1238,7 +1215,6 @@ export default {
               }
             })
           })
-          // }
         }
         this.detailData = newData
       }
@@ -1288,7 +1264,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1296,15 +1272,24 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

@@ -183,7 +183,7 @@
           slot-scope="text, record, index"
         >{{ index + 1 + (current - 1) * currentSize }}</span>
         <span slot="supType" slot-scope="text">{{ text }}</span>
-       <ellipsis slot="supName" slot-scope="text" :length="20" tooltip>
+       <ellipsis slot="supName" slot-scope="text" :length="40" tooltip>
         {{ text }}
       </ellipsis>
       </s-table>
@@ -214,8 +214,7 @@
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0;width:150px;"
             :value="text" 
-            :placeholder="columns[i].title"    
-            @change="e => handleChange(e.target.value, record.key, col)"      
+            :placeholder="columns[i].title"        
           />
           <a-input-number
             :key="col"
@@ -400,7 +399,7 @@ export default {
       selectFields: [],
       inputFields: ['remark'],
       datePickerFields: [],  
-      numberFields: ['quota_consumption','above_amount','deduction_amount','price'],
+      numberFields: ['actual_consumption', 'quota_consumption','price'],
       memberLoading: false,
       loading: false,
       saveLoading: false,
@@ -652,7 +651,7 @@ export default {
         {
           title: '分包商名称',
           dataIndex: 'supName',
-          width: '150px',
+          width: '200px',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -672,8 +671,6 @@ export default {
           dataIndex: 'legalPersonName',
           width: '100px',
           scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
             customRender: 'legalPersonName'
           }
         },
@@ -691,9 +688,12 @@ export default {
   watch: {
     $route (to, from) {
       if (this.$route.params.type === 1) {
+        console.log('2222222222222')
         this.resetForm()
       }
+      
       if (from.path === '/computation/waterList') {
+        console.log('3333333333')
         this.isrequired = true
       }
     }
@@ -705,7 +705,7 @@ export default {
   },
   methods: {
     ...mapGetters(['nickname']),
-        handleCustomRow(record, index) {
+    handleCustomRow(record, index) {
       return {
         on: {
           dblclick: () => {
@@ -792,7 +792,8 @@ export default {
             that.noSelect(`开始日期不能大于结束日期`)
             setTimeout(()=>{
                 this.form.setFieldsValue({
-                    deduction_start_date: null
+                    deduction_start_date: null,
+                    deduction_end_date: null
                 })
             },50)
         } 
@@ -928,7 +929,7 @@ export default {
             return
         }
         if (res.responseList !== undefined || res.responseObject !== null) {
-            this.serial_number=res.responseList.serial_number
+            // this.serial_number=res.responseList.serial_number
             this.detailData = res.responseList.map((d,i) => {
                 d.quota_consumption = d.quota_consumption
                 d.above_amount = d.above_amount
@@ -978,12 +979,30 @@ export default {
       const target = newData.filter(item => key === item.key)[0]
       if (target) {
         target[column] = value
-        if (['actual_consumption', 'price'].includes(column)) {
-          target.deduction_amount= (target.actual_consumption *target.price).toFixed(2)
+        if (['actual_consumption', 'quota_consumption','price'].includes(column)) {
+          target.deduction_amount = ''
+
+          if (isNaN(target.actual_consumption)) {
+            target.actual_consumption = '';
+          }
+
+          if (isNaN(target.quota_consumption)) {
+            target.quota_consumption = '';
+          }
+          
+          if (target.actual_consumption !== '' && target.quota_consumption !== '') {
+            target.above_amount = (target.actual_consumption - target.quota_consumption).toFixed(4)
+          }
+          
+          if (target.above_amount < 0) {
+            target.above_amount = 0;
+          }
+
+          target.deduction_amount= (target.above_amount *target.price).toFixed(2)
           if (isNaN(target.deduction_amount)) {
               target.deduction_amount = ''
           } else {
-            target.deduction_amount = target.actual_consumption *target.price
+            target.deduction_amount = (target.above_amount *target.price).toFixed(2)
           }
         }
 

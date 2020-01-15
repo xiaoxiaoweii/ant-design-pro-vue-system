@@ -7,7 +7,7 @@
         </span>
       </a>-->
       <!-- <notice-icon class="action"/> -->
-      <!-- 项目选择 -->
+
       <a-tree-select
         class="tree-select"
         style="width: 200px"
@@ -17,7 +17,7 @@
         @change="onChange"
         v-model="value"
       ></a-tree-select>
-      <!-- 用户信息 -->
+
       <a-dropdown>
         <span class="action ant-dropdown-link user-dropdown-menu">
           <!-- <a-avatar

@@ -166,7 +166,7 @@
           <a-input-number
             :key="col"
             :value="text"
-            :min="1 "
+            :min="0.00001"
             :precision="5"
             :max="999999999"
             :placeholder="columnsTitle[i]"

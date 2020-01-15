@@ -517,7 +517,7 @@ export default {
       let num = 0
       this.detailData.forEach(x => {
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100

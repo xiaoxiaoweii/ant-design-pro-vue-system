@@ -255,7 +255,7 @@ export default {
         },
         {
           title: '所属机构',
-          dataIndex: 'user_department',
+          dataIndex: 'user_org_name',
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
@@ -271,14 +271,31 @@ export default {
           }
         },
         {
-          title: '岗位',
-          dataIndex: 'user_position',
+          title: '所属部门',
+          dataIndex: 'user_depart_name',
+          scopedSlots: { customRender: 'user_depart_name' }
+        },
+        {
+          title: '所属岗位',
+          dataIndex: 'user_position_name',
           scopedSlots: { customRender: 'user_position' }
         },
         {
           title: 'IP',
           dataIndex: 'ip',
-          scopedSlots: { customRender: 'ip' }
+          scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
+            customRender: 'ip' 
+          },
+          onFilter: (value, record) => record.ip.toLowerCase().includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
+            if (visible) {
+              setTimeout(() => {
+                this.searchInput.focus()
+              }, 0)
+            }
+          }
         },
         {
           title: '记录时间',
@@ -299,30 +316,36 @@ export default {
           },
           sorter: (a, b) => a.created_at.split('-').join('') - b.created_at.split('-').join('')
         },
-        // {
-        //   title: '操作类型',
-        //   dataIndex: 'operate_type',
-        //   key: 'operate_type',
-        //   width: '120px',
-        //   scopedSlots: {
-        //     customRender: 'operate_type'
-        //   },
-        //   filterMultiple: false,
-        //   filters: formStatusArray,
-        //   filteredValue: filteredInfo.operate_type || null,
-        //   onFilter: (value, record) => record.operate_type === value
-        // },
+        {
+          title: '操作类型',
+          dataIndex: 'operate_type',
+          key: 'operate_type',
+          width: '120px',
+          scopedSlots: {
+            customRender: 'operate_type'
+          },
+          filterMultiple: false,
+          filters: formStatusArray,
+          filteredValue: filteredInfo.operate_type || null,
+          onFilter: (value, record) => record.operate_type === value
+        },
         {
           title: '操作内容',
           dataIndex: 'operate_content',
           width: '150px',
           scopedSlots: {
+            filterDropdown: 'filterDropdown',
+            filterIcon: 'filterIcon',
             customRender: 'operate_content'
-          },
-          filterMultiple: false,
-          filters: formContent,
-          filteredValue: filteredInfo.operate_content || null,
-          onFilter: (value, record) => record.operate_content === value
+          },       
+          onFilter: (value, record) => record.operate_content.toLowerCase().includes(value.toLowerCase()),
+          onFilterDropdownVisibleChange: (visible) => {
+            if (visible) {
+              setTimeout(() => {
+                // this.searchInput.focus()
+              }, 0)
+            }
+          }
         }
       ]
     }
@@ -378,7 +401,7 @@ export default {
       dataSource: [],
       // 加载数据方法 必须为 Promise 对象
       loadData: parameter => {
-        console.log('loadData.parameter', parameter)
+        // console.log('loadData.parameter', parameter)
         for (const key in parameter) {
           if (parameter.hasOwnProperty(key)) {
             if (parameter[key] instanceof Array) {
@@ -397,17 +420,14 @@ export default {
           res.responsePageInfo.list = res.responsePageInfo.list.map(x => {
             if (x.operate_type  === 1) {
               x.operate_type = '用户登陆'
-              return x
             }
             if (x.operate_type  === 2) {
               x.operate_type = '数据编辑'
-              return x
             }
             if (x.operate_type  === 3) {
               x.operate_type = '系统管理'
-              return x
             }
-            
+            return x
           })
           this.dataSource = res.result ? res.result.data : res.responsePageInfo.list
           this.current = res.responsePageInfo.pageNum

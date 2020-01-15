@@ -344,6 +344,14 @@ export default {
       ],
       columns: [
         {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
+        {
           title: '材料名称',
           dataIndex: 'material_name',
           align: 'center',
@@ -360,6 +368,7 @@ export default {
         {
           title: '单位',
           dataIndex: 'unit',
+          align: 'center',
           align: 'center',
           width: '120px',
           scopedSlots: { customRender: 'unit' }
@@ -654,8 +663,8 @@ export default {
       if (data.id) {
         await getDeviceList({ id: data.id, menu_id: 17 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
-         
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code = i+1
             if (d.number===0) d.number = ''
             d.key = d.id
             if(d.approved_alloc_num==null) d.approved_alloc_num = 0

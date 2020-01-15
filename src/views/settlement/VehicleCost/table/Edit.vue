@@ -165,6 +165,7 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
+            :class="col + record.order_number"
             :maxlength="128"
             :read-only="col === 'contract_code'"
             v-if="record.editable && inputFields.includes(col)"
@@ -177,6 +178,7 @@
             @change="e => handleChange(e.target.value, record.key, col)"
           />
           <a-select
+            :class="col + record.order_number"
             :key="col"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
@@ -191,6 +193,7 @@
             >{{ item.dic_enum_name }}</a-select-option>
           </a-select>
           <a-date-picker
+            :class="col + record.order_number"
             :key="col"
             :value="text"
             :placeholder="columnTitle[i]"
@@ -198,6 +201,7 @@
             @change="value => handleChange(value, record.key, col)"
           />
           <a-range-picker
+            :class="col + record.order_number"
             v-decorator="['range-time-picker']"
             show-time
             format="YYYY-MM-DD HH:mm:ss"
@@ -209,6 +213,7 @@
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :min="0"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :placeholder="columnTitle[i]"
@@ -1004,7 +1009,7 @@ export default {
       this.detailData.forEach(x => {
         if (!x[attr]) x[attr] = 0
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100
@@ -1136,14 +1141,23 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
                   this.$notification['error']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`

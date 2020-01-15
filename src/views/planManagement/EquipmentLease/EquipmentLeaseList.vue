@@ -76,10 +76,11 @@ export default {
     },
     $route(to, from) {
       if (to.path === '/planManagement/equipmentLeaseList') {
-        if (!this.$store.state.keepaliveArr.includes('/planManagement/equipmentLeaseList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/planManagement/equipmentLeaseList')
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/planManagement/equipmentLeaseList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/planManagement/equipmentLeaseList')
       }
     }
   }

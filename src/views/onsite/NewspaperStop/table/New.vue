@@ -275,6 +275,7 @@
         rowKey="id"
         bordered
         :columns="equipColumns"
+        :customRow="dbClick"
         :data="loadTableData"
         :alert="false"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
@@ -711,7 +712,17 @@ export default {
       this.visible_name = true
       this.$refs.Mtables && this.$refs.Mtables.refresh(true)
     },
-
+    // 双击确定
+    dbClick (record) {
+      return {
+        on: {
+          dblclick: (e) => {
+            this.selectedRowKeys[0]=record.id
+            this.handleName(this.selectedRowKeys)
+          }
+        }
+      }
+    },
     handleName (val) {
       this.visible_name = false
       const arr = this.contractData.responsePageInfo.list.filter(item => item.id === val[0])
@@ -812,7 +823,10 @@ export default {
             x.type = 0
             return x
           })
-
+          //对备注进行校验
+          if(values.stop_reason&&values.stop_reason.length>1000){
+            return
+          }
           values.creator_org_id = that.$store.state.menu_key //右上角编号
           values.creator_org_name = that.$store.state.org_name
           values.pro_unit_code = that.$store.state.pro_unit_code //编制单位编号

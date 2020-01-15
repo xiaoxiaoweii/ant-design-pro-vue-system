@@ -158,8 +158,8 @@
           <a-input-number
             :key="col"
             :value="text"
-            :min="col=='num'?1:0"
-            :precision="col=='num'?0.1:2"
+            :min="col=='num'?0.00001:0"
+            :precision="col=='num'?5:2"
             :max="999999999"
             :placeholder="columnsTitle[i]"
             v-else-if="record.editable && numberFields.includes(col)"
@@ -521,6 +521,7 @@ export default {
       myEquipment_code: '',
       input1: '',
       input2: '',
+      myNum:[],
       params: {},
       sizeSum: 0,
       picList: [],
@@ -614,8 +615,7 @@ export default {
       selectFields: ['tax_rate'],
       inputFields: ['remark'],
       datePickerFields: ['planned_arrival_date1'],
-      numberFields: ['num', 'price_without_tax'],
-      numberFields2: [],
+      numberFields: ['num','price_without_tax'],
       popconfirmFields: ['name'],
       popconfirmFields2:['supplier'],
       memberLoading: false,
@@ -1107,6 +1107,7 @@ export default {
             d.editable = true
             d.order_number = i+1
             d.isNew = true
+            this.myNum.push(d.approved_purchase_num)
             d.key = d.id
             if (d.planned_arrival_date) {
               d.planned_arrival_date1 = moment(d.planned_arrival_date)
@@ -1296,6 +1297,7 @@ export default {
           x.num = arr[0].approved_purchase_num
           x.material_code = arr[0].material_code
           x.code = arr[0].id
+          this.myNum[i] = (arr[0].approved_purchase_num)
         }
         return x
       })
@@ -1368,6 +1370,7 @@ export default {
       this.resetForm()
       this.$root.$emit('global::evt.multitabClose', this.$router.currentRoute.fullPath)
       this.$router.push({ path: '/planManagement/materialList' })
+      this.myNum = []
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -1503,6 +1506,18 @@ export default {
               x.type = 0
               return x
             })
+            let numbreak = false
+            values.details.map((x,i)=>{
+              if(x.num>this.myNum[i]) {
+                this.$notification['warning']({
+                    message: '提示',
+                    description: `第${i+1}行数量不能超过引入的材料数量`
+                  })
+                  numbreak = true
+                  return
+              }
+            })
+            if(numbreak) return
             values.files.push(...that.picList)
             values.files.map(d => {
               delete d.url

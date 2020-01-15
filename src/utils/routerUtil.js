@@ -42,9 +42,9 @@ const constantRouterComponents = {
   resultFail: () => import('@/views/result/Error'),
 
   // Exception
-  403: () => import('@/views/403'),
-  404: () => import('@/views/404'),
-  500: () => import('@/views/500'),
+  403: () => import('@/views/exception/403'),
+  404: () => import('@/views/exception/404'),
+  500: () => import('@/views/exception/500'),
 
   // account
   center: () => import('@/views/account/center/Index'),

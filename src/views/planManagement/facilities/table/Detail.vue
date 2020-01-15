@@ -337,9 +337,17 @@ export default {
       // details table
       detailData: [],
       columnsTitle: [
-        '设备名称','设备编码','规格型号','单位','数量','含税单价','不含税单价(元)','税率(%)', '含税单价(元)','税额','不含税金额','含税金额','供应商名称','备注'  
+        '设备名称','设备编码','规格型号','单位','数量','含税单价','不含税单价(元)','税率(%)', '含税单价(元)','税额','不含税总额','含税总额','供应商名称','备注'  
         ],
       columns: [
+        {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
         {
           title: '设备名称',
           dataIndex: 'name',
@@ -414,7 +422,7 @@ export default {
   
         },
         {
-          title: '不含税金额',
+          title: '不含税总额',
           dataIndex: 'total_without_tax',
           key: 'total_without_tax',
           width: '150px',
@@ -422,7 +430,7 @@ export default {
           scopedSlots: { customRender: 'total_without_tax' }
         },
         {
-          title: '含税金额',
+          title: '含税总额',
           dataIndex: 'total_with_tax',
           key: 'total_with_tax',
           width: '150px',
@@ -657,8 +665,8 @@ export default {
       if (data.id) {
         await queryone({ id: data.id, menu_id: 29 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
-         
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code = i+1
             if (d.number===0) d.number = ''
             d.key = d.id
 

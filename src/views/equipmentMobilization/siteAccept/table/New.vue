@@ -822,6 +822,7 @@
       <div class="accept" v-if="activeTabKey === 'accept'">
         <a-table
           ref="table"
+          :rowClassName="setRowClassName"
           :columns="acceptColumns"
           :pagination="false"
           :dataSource="acceptData"
@@ -898,6 +899,7 @@
         >
           <template v-for="(col, i) in nameFields" :slot="col" slot-scope="text, record">
             <a-input
+              :class="col + record.order_number"
               :key="col"
               :maxlength="128"
               style="margin: -5px 0"
@@ -908,12 +910,14 @@
             />
             <a-date-picker
               :key="col"
+              :class="col + record.order_number"
               :value="text"
               v-else-if="record.editable && datePickerFields.includes(col)"
               @change="value => name_handleChange(value, record.key, col)"
             />
             <a-select
               :key="col"
+              :class="col + record.order_number"
               v-else-if="record.editable && select_nameFields.includes(col)"
               style="margin: -5px 0"
               :value="text"
@@ -978,6 +982,7 @@
             <a-input
               :key="col"
               :maxlength="128"
+              :class="col + record.order_number"
               v-if="record.editable && input_equipFields.includes(col)"
               style="margin: -5px 0"
               :value="text"
@@ -987,11 +992,13 @@
             <a-date-picker
               :key="col"
               :value="text"
+              :class="col + record.order_number"
               v-else-if="record.editable && datePicker_equipFields.includes(col)"
               @change="value => equip_handleChange(value, record.key, col)"
             />
             <a-select
               :key="col"
+              :class="col + record.order_number"
               v-else-if="record.editable && select_equipFields.includes(col)"
               style="margin: -5px 0"
               :value="text"
@@ -1007,6 +1014,7 @@
             <a-input-number
               :key="col"
               :value="text"
+              :class="col + record.order_number"
               :max="999999999"
               :min="0"
               :step="1"
@@ -1452,8 +1460,8 @@ export default {
       acceptColumns: [
         {
           title: '序号',
-          dataIndex: 'code',
-          key: 'code'
+          dataIndex: 'order_number',
+          key: 'order_number'
         },
         {
           title: '验收项目',
@@ -1536,9 +1544,9 @@ export default {
       columns: [
         {
           title: '序号',
-          dataIndex: 'name_code',
-          key: 'naname_code',
-          scopedSlots: { customRender: 'name_code' }
+          dataIndex: 'order_number',
+          key: 'order_number',
+          scopedSlots: { customRender: 'order_number' }
         },
         {
           title: '操作手姓名',
@@ -1619,9 +1627,9 @@ export default {
       columns_equip: [
         {
           title: '序号',
-          dataIndex: 'equip_code',
-          key: 'equip_code',
-          scopedSlots: { customRender: 'equip_code' }
+          dataIndex: 'order_number',
+          key: 'order_number',
+          scopedSlots: { customRender: 'order_number' }
         },
         {
           title: '证件名称',
@@ -2319,12 +2327,15 @@ export default {
       this.tableLoading = true
       queryTransfer(Object.assign({ pageSize: 13, pageNum: 1 }, { menu_id: 33, org_in_code: this.$store.state.menu_key }, this.queryParam)).then(res => {
         this.tableData = res.responseList.map((x, i) => {
-          x.code = i + 1
+          x.order_number = i + 1
           return x
         })
         this.tableLoading = false
         this.pagination.total = res.responseList.length
       })
+    },
+    setRowClassName () {
+      return 'setRowClassName'
     },
 
     showTable () {
@@ -2362,7 +2373,7 @@ export default {
             d.editable = true
             d.isNew = true
             d.key = i + 1
-            d.code = i + 1
+            d.order_number = i + 1
             return d
           })
         })
@@ -2510,7 +2521,7 @@ export default {
           d.editable = true
           d.isNew = true
           d.key = i + 1
-          d.code = i + 1
+          d.order_number = i + 1
           return d
         })
       })
@@ -2615,14 +2626,14 @@ export default {
             d.editable = true
             d.isNew = true
             d.key = d.id + ''
-            d.code = i + 1
+            d.order_number = i + 1
             return d
           })
           this.nameData = res.responseObject.detail1.map((d, i) => {
             d.certificate_expire_on1 = moment(d.certificate_expire_on)
             d.editable = true
             d.isNew = true
-            d.name_code = i + 1
+            d.order_number = i + 1
             d.key = d.id + ''
             return d
           })
@@ -2631,7 +2642,7 @@ export default {
             d.insurance_expire_date1 = moment(d.insurance_expire_date)
             d.editable = true
             d.isNew = true
-            d.equip_code = i + 1
+            d.order_number = i + 1
             d.key = d.id + ''
             return d
           })
@@ -2651,11 +2662,11 @@ export default {
           })
         })
         this.nameData = this.nameData.map((item, index) => {
-          item.code = index
+          item.order_number = index
           return item
         })
         this.equipData = this.equipData.map((item, index) => {
-          item.code = index
+          item.order_number = index
           return item
         })
         const formData = pick(data, [
@@ -2704,7 +2715,7 @@ export default {
 
       this.nameData.push({
         key: length === 0 ? '1' : (parseInt(this.nameData[length - 1].key) + 1).toString(),
-        name_code: length + 1,
+        order_number: length + 1,
         operator_name: '',
         identity_no: '',
         telephone: '',
@@ -2722,7 +2733,7 @@ export default {
       if (length && !this.equipData[length - 1].cetificate_name) return this.noSelect('请填完上一条数据')
       this.equipData.push({
         key: length === 0 ? '1' : (parseInt(this.equipData[length - 1].key) + 1).toString(),
-        equip_code: length + 1,
+        order_number: length + 1,
         cetificate_name: '',
         cetificate_no: '',
         check_org_name: '',
@@ -2826,28 +2837,41 @@ export default {
           message: '提示',
           description: '提交时明细不能为空'
         })
-        return
+        return true
       }
       let colname = ''
+      let keyname = ''
       arr.forEach((d, i) => {
-        if (d.code !== '合计') {
+        if (d.order_number !== '合计') {
           for (var key in d) {
             if (!d[key] && d[key] !== 0) {
               if (key != 'remark') {
+                console.log(key)
                 column.map(item => {
-                  if (item.dataIndex == key) colname = item.title
+                  if (item.dataIndex == key) {
+                    colname = item.title
+                    keyname = item.dataIndex
+                  }
                 })
+                if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                  document.querySelector(`.${keyname + d.order_number} input`).focus()
+                } else {
+                  document.querySelector(`.${keyname + d.order_number}`).focus()
+                }
                 this.$notification['error']({
                   message: '提示',
-                  description: `提交时第${d.code}行：${colname}不能为空`
+                  description: `提交时第${d.order_number}行：${colname}不能为空`
                 })
-                flag = true
-                return
+
+                return flag = true
+              } else {
+                flag = false
               }
             }
           }
         }
       })
+      return flag
     },
 
     // 最终全页面提交
@@ -2859,11 +2883,13 @@ export default {
       if (type === 'save') {
         this.isrequired = false
       } else {
-        // let flag = false
-        // this.checkdata(this.acceptData, this.acceptColumns, flag)
-        // this.checkdata(this.nameData, this.columns, flag)
-        // this.checkdata(this.equipData, this.columns_equip, flag)
-        // if (flag) return
+        let flag = false
+        const a = this.checkdata(this.acceptData, this.acceptColumns, flag)
+        if (a) return
+        const b = this.checkdata(this.nameData, this.columns, flag)
+        if (b) return
+        const c = this.checkdata(this.equipData, this.columns_equip, flag)
+        if (c) return
       }
       setTimeout(() => {
         validateFields((err, values) => {
@@ -2941,26 +2967,26 @@ export default {
                 onCancel () { }
               })
             }
-          }
-          if (type === 'save') {
-            that.saveLoading = true
+            if (type === 'save') {
+              that.saveLoading = true
 
-            // values.details.forEach(x => {
-            //   x.check_item = x.inspect_name + '丨' + x.check_item
-            // })
+              // values.details.forEach(x => {
+              //   x.check_item = x.inspect_name + '丨' + x.check_item
+              // })
 
-            return handlePurchase(values, 'create').then(res => {
-              that.saveLoading = false
-              if (res.status === '0') {
-                that.$notification['success']({
-                  message: '提示',
-                  description: res.msg
-                })
-                that.handleGoBack() // 返回列表页
-              }
-            }).finally(() => {
-              that.submitLoading = false
-            })
+              return handlePurchase(values, 'create').then(res => {
+                that.saveLoading = false
+                if (res.status === '0') {
+                  that.$notification['success']({
+                    message: '提示',
+                    description: res.msg
+                  })
+                  that.handleGoBack() // 返回列表页
+                }
+              }).finally(() => {
+                that.submitLoading = false
+              })
+            }
           }
         })
       }, 100)
@@ -3116,6 +3142,14 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 .Etable {
   margin-top: 20px;

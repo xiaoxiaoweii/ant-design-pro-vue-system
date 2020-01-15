@@ -354,11 +354,19 @@ export default {
         '计划租期/工作量',
         '税率(%)',
         '税额',
-        '含税金额',
-        '不含税金额',
+        '含税总额',
+        '不含税总额',
         '备注'  
       ],
       columns: [
+        {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
         {
           title: '设备需求计划单号',
           dataIndex: 'rent_plan_sn',
@@ -485,14 +493,14 @@ export default {
           scopedSlots: { customRender: 'tax_fee' }
         },
         {
-          title: '含税金额',
+          title: '含税总额',
           dataIndex: 'sum_with_tax',
           key: 'sum_with_tax',
           align: 'center',
           scopedSlots: { customRender: 'sum_with_tax' }
         },
         {
-          title: '不含税金额',
+          title: '不含税总金额',
           dataIndex: 'sum_tax_fee',
           key: 'sum_tax_fee',
           align: 'center',
@@ -724,8 +732,8 @@ export default {
       if (data.id) {
         await getDeviceList({ id: data.id, menu_id: 22 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
-         
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code = i+1
             if (d.number===0) d.number = ''
             d.key = d.id
 

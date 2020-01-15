@@ -683,9 +683,9 @@ export default {
         '数量',
         '不含税单价',
         '税率(%)',
-        '不含税金额',
+        '不含税总额',
         '税额',
-        '含税金额(元)',
+        '含税总额(元)',
         '备注'
       ],
       columns: [
@@ -739,7 +739,7 @@ export default {
           scopedSlots: { customRender: 'tax_rate' }
         },
         {
-          title: '不含税金额(元)',
+          title: '不含税总额(元)',
           dataIndex: 'total_without_tax',
           key: 'total_without_tax',
           width: '150px',
@@ -755,7 +755,7 @@ export default {
           scopedSlots: { customRender: 'total_tax' }
         },
         {
-          title: '含税金额(元)',
+          title: '含税总额(元)',
           dataIndex: 'total_with_tax',
           key: 'total_with_tax',
           width: '150px',

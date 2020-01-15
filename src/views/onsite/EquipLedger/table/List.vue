@@ -113,6 +113,9 @@
       <span slot="usage_state" slot-scope="text">
         {{ text | statusFilter }}
       </span>
+      <span slot="equip_source" slot-scope="text">
+        {{ text}}
+      </span>
     </s-table>
   </div>
 </template>
@@ -122,7 +125,7 @@ import moment from 'moment'
 import print from 'print-js'
 import { STable } from '@/components'
 import Ellipsis from '@/components/Ellipsis'
-import { exportPDF, exportPDFList, exportExcel, exportExcelList } from '@/api/onsite/upload'
+import { exportPDF, exportPDFList, exportExcel, exportExcelList,querySingle } from '@/api/onsite/upload'
 import { handleQueryButton } from '@/api/userMenu'
 import { queryEquip,equipStatusArray,equipStatusLabel } from '@/api/onsite/equipLedger'
 import { mapGetters } from 'vuex'
@@ -382,19 +385,13 @@ export default {
           title: '设备来源',
           dataIndex: 'equip_source',
           width: '220px',
+          key: 'equip_source',
           scopedSlots: {
-            filterDropdown: 'filterDropdown',
-            filterIcon: 'filterIcon',
             customRender: 'equip_source'
           },
-          onFilter: (value, record) => record.equip_source.toLowerCase().includes(value.toLowerCase()),
-          onFilterDropdownVisibleChange: (visible) => {
-            if (visible) {
-              setTimeout(() => {
-                // this.searchInput.focus()
-              }, 0)
-            }
-          }
+          filterMultiple: false,
+          filters: this.selectData['equip_source'],
+          onFilter: (value, record) => record.equip_source === value        
         },
         // {
         //   title: '操作手姓名',
@@ -676,6 +673,13 @@ export default {
       outrange: [],
       productionrange: [],
       equipStatusArray: equipStatusArray,
+      selectData: {
+        'equip_source':[
+          {'text':'自有设备','value':'自有设备'},
+          {'text':'租赁设备','value':'租赁设备'},
+          {'text':'分包商设备','value':'分包商设备'},
+        ]
+      },
       title: '盘点单',
       mdl: {},
       // 高级搜索 展开/关闭
@@ -781,6 +785,7 @@ export default {
   watch: {
     $route(to, from) {
       if (from.path !== this.$route.fullPath) {
+        this.queryDictionary()
         this.refresh(true)
       }
     }
@@ -804,6 +809,7 @@ export default {
       },(err)=>{
         console.log(err)
       })
+      this.queryDictionary()
     }, 0)
   },
   filters: {
@@ -813,6 +819,21 @@ export default {
   },
   methods: {
     ...mapGetters(['nickname']),
+    queryDictionary(){
+      let that=this
+      let dicObj={
+            'equip_source':1010, //设备来源
+          }
+      Object.getOwnPropertyNames(dicObj).forEach(key=>{
+        querySingle({dic_type_id:dicObj[key]}).then(res=>{
+          that.selectData[key]=res.responseList.map(item=>{
+            item['text']=item['dic_enum_name']
+            item['value']=item['dic_enum_name']
+            return item
+          })
+        })
+      })
+    },
     setFilterColumnScope (data) {
       const { column } = data
       this.customFilterColumn[column.dataIndex] = data

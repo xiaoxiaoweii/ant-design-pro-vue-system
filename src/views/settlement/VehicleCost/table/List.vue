@@ -469,7 +469,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/settlement/vehicleCostNew' || from.path === '/settlement/vehicleCostEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

@@ -8,7 +8,8 @@
       :closable="false"
       :visible="collapsed"
       @close="drawerClose"
-    >
+    > 
+      <logo />
       <side-menu
         mode="inline"
         :menus="menus"
@@ -18,7 +19,7 @@
         @menuSelect="menuSelect"
       ></side-menu>
     </a-drawer>
-
+    
     <side-menu
       v-else-if="isSideMenu()"
       mode="inline"
@@ -63,6 +64,7 @@
 import { triggerWindowResizeEvent } from '@/utils/util'
 import { mapState, mapActions } from 'vuex'
 import { mixin, mixinDevice, mixinEvent } from '@/utils/mixin'
+import Logo from '@/components/tools/Logo'
 import config from '@/config/defaultSettings'
 
 import RouteView from './RouteView'
@@ -80,6 +82,7 @@ export default {
     'evt.updateMenu': 'updateMenu'
   },
   components: {
+    Logo,
     RouteView,
     MultiTab,
     SideMenu,

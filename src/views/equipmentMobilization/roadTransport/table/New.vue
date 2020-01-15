@@ -150,8 +150,10 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <div :key="col" v-if="record.editable && propFields.includes(col)">
             <a-input
+              :read-only="col === 'car_name'"
               style="margin: -5px 0"
               :maxlength="128"
+              :class="col + record.code"
               :value="text"
               @click="showModal(record)"
               @change="e => handleChange(e.target.value, record.key, col)"
@@ -161,6 +163,7 @@
           <a-input
             :key="col"
             :maxlength="128"
+            :class="col + record.code"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -185,6 +188,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+            :class="col + record.code"
             :value="text"
             :placeholder="tableTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -194,6 +198,7 @@
             :key="col"
             :value="text"
             :max="999999999"
+            :class="col + record.code"
             :min="0"
             :step="col === 'num' ? 1 : 1"
             :placeholder="tableTitle[i]"
@@ -988,7 +993,7 @@ export default {
       const that = this
       if (type === 'submit') {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -996,15 +1001,31 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.code !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark' && key != 'reply') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
-                  })
-                  this.$notification['error']({
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
+                    if (item.children) {
+                      item.children.map(c => {
+                        if (c.dataIndex == key) {
+                          colname = c.title
+                          keyname = c.dataIndex
+                        }
+                    })}
+                    })
+                  if (document.querySelector(`.${keyname + d.code} input`)) {
+                    document.querySelector(`.${keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code}`)) {
+                    document.querySelector(`.${keyname + d.code}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.code}行：${colname}不能为空`
                   })

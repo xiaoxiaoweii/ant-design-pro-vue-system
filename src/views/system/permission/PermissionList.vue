@@ -136,6 +136,11 @@ export default {
           scopedSlots: { customRender: 'type' }
         },
         {
+          title: '所属组织',
+          dataIndex: 'user_position_name',
+          scopedSlots: { customRender: 'user_position_name' }
+        },
+        {
           title: '授权状态',
           dataIndex: 'status',
           scopedSlots: { customRender: 'is_valid' }

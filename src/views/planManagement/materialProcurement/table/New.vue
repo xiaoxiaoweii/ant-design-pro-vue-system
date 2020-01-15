@@ -175,8 +175,8 @@
             ref="myinput"
             :key="col"
             :value="text"
-            :min="1"
-            :precision="0.1"
+            :min="0.00001"
+            :precision="5"
             :max="999999999"
             :placeholder="columnsTitle[i]"
             v-else-if="record.editable && numberFields2.includes(col)"
@@ -554,6 +554,7 @@ export default {
       formStatusArray: formStatusArray,
       showIndex: 0,
       treeData: [],
+      myNum:[],
       settingTree: {
         check: {
           enable: false
@@ -634,7 +635,7 @@ export default {
       inputFields: [ 'remark'],
       datePickerFields: ['planned_arrival_date1'],
       numberFields: [ 'price_without_tax'],
-      numberFields2: [],
+      numberFields2: ['num'],
       popconfirmFields: ['name'],
       popconfirmFields2:['supplier'],
       memberLoading: false,
@@ -1241,6 +1242,7 @@ export default {
           x.num = arr[0].approved_purchase_num
           x.material_code = arr[0].material_code
           x.code = arr[0].id
+          this.myNum[i] = (arr[0].approved_purchase_num)
         }
         return x
       })
@@ -1313,6 +1315,7 @@ export default {
       this.resetForm()
       this.$root.$emit('global::evt.multitabClose', this.$router.currentRoute.fullPath)
       this.$router.push({ path: '/planManagement/materialList' })
+      this.myNum = []
     },
     onSelectChange (selectedRowKeys, selectedRows) {
       this.selectedRowKeys = selectedRowKeys
@@ -1450,6 +1453,18 @@ export default {
                   })
                 }
               }
+            let numbreak = false
+            values.details.map((x,i)=>{
+              if(x.num>this.myNum[i]) {
+                this.$notification['warning']({
+                    message: '提示',
+                    description: `第${i+1}行数量不能超过引入的材料数量`
+                  })
+                  numbreak = true
+                  return
+              }
+            })
+            if(numbreak) return  
             values.files = that.fileList.map(x => {
               x.type = 0
               return x

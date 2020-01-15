@@ -345,6 +345,7 @@ export default {
         {
           title: '净值总价(元)',
           dataIndex: 'total_netvalue_sum',
+          align:'right',
           scopedSlots: { customRender: 'total_netvalue_sum' }
         },
         {

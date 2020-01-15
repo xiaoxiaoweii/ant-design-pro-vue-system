@@ -172,6 +172,7 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
+            :class="col + record.order_number"
             :maxlength="128"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
@@ -181,6 +182,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -196,6 +198,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -206,12 +209,14 @@
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
           <a-input-number
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :min="0"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :placeholder="columnTitle[i]"
@@ -864,6 +869,12 @@ export default {
           x.rent_type = '月租'
           x.fee_type = '月'
           x.tax_rate = 6
+          x.price = ''
+          x.amount = ''
+          x.other_fees = ''
+          x.other_fees_cost = ''
+          x.deductions_money = ''
+          x.deductions_money_cost = ''
           getAmount({ contract_code: x.contract_code }).then(res => {
             console.log(res)
             x.sumObj = res.responseObject
@@ -1079,7 +1090,7 @@ export default {
       let num = 0
       this.detailData.forEach(x => {
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100
@@ -1121,50 +1132,27 @@ export default {
               .rent_price_monthly
             target.deductions_money = target.deductions_money > number ? target.number : target.deductions_money
           }
+          const price = target.price || 0
+          const amount = target.amount || 0
+          const tax_rate = target.tax_rate || 0
 
-          // 判断单价 置空结算数据
-          if (!target.price) {
-            target.price = 0
-            target.tax_amount = 0
-            target.settlement_amount_excluding_tax = 0
-            target.settlement_amount = 0
-            target.contract_add_amount_without_tax = 0
-            target.contract_add_amount = 0
-          }
+          const fee = parseInt((target.other_fees || 0) * 100 - (target.deductions_money || 0) * 100) / 100
+          const pri = parseInt(price * amount * 100) / 100
 
-          // 判断数量 置空结算数据
-          if (!target.amount) {
-            target.amount = 0
-            target.tax_amount = 0
-            target.settlement_amount_excluding_tax = 0
-            target.settlement_amount = 0
-            target.contract_add_amount_without_tax = 0
-            target.contract_add_amount = 0
-          }
+          // 结算金额 不含税
+          target.settlement_amount_excluding_tax = parseInt(price * amount * 100 + (target.other_fees || 0) * 100 - (target.deductions_money || 0) * 100) / 100
 
-          if (target.price && target.amount) {
-            const fee = parseInt((target.other_fees || 0) * 100 + (target.deductions_money || 0) * 100) / 100
-            const pri = parseInt(target.price * target.amount * 100) / 100
-            // if (fee > pri) {
-            //   target[column] = 0
-            //   return this.noSelect('其他费用加扣款金额不得大于不含税总额！')
-            // }
+          // 税额
+          target.tax_amount = parseInt(price * tax_rate * amount) / 100
 
-            // 结算金额 不含税
-            target.settlement_amount_excluding_tax = parseInt(target.price * target.amount * 100 + (target.other_fees || 0) * 100 - (target.deductions_money || 0) * 100) / 100
+          // 结算金额 含税
+          target.settlement_amount = parseInt(target.settlement_amount_excluding_tax * 100 + target.tax_amount * 100) / 100
 
-            // 税额
-            target.tax_amount = parseInt(target.price * target.tax_rate * target.amount) / 100
+          // 开累结算金额 不含税
+          target.contract_add_amount_without_tax = parseInt(target.sumObj.contract_add_amount_without_tax * 100 + target.settlement_amount_excluding_tax * 100) / 100
 
-            // 结算金额 含税
-            target.settlement_amount = parseInt((target.price * target.tax_rate / 100 + target.price) * 100 * target.amount + ((target.other_fees || 0) * (100 + target.tax_rate) - (target.deductions_money || 0) * (100 + target.tax_rate))) / 100
-
-            // 开累结算金额 不含税
-            target.contract_add_amount_without_tax = parseInt(target.sumObj.contract_add_amount_without_tax * 100 + target.settlement_amount_excluding_tax * 100) / 100
-
-            // 开累结算金额 含税
-            target.contract_add_amount = parseInt(target.settlement_amount * 100 + target.sumObj.contract_add_amount * 100) / 100
-          }
+          // 开累结算金额 含税
+          target.contract_add_amount = parseInt(target.settlement_amount * 100 + target.sumObj.contract_add_amount * 100) / 100
 
           const arr = ['price', 'amount', 'tax_amount', 'other_fees', 'deductions_money', 'settlement_amount_excluding_tax', 'settlement_amount', 'contract_add_amount_without_tax', 'contract_add_amount']
           arr.map(x => {
@@ -1228,7 +1216,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1236,15 +1224,24 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

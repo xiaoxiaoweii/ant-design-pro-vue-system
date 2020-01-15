@@ -314,6 +314,7 @@ export default {
       if (data.id) {
         queryone ({ id: data.id, menu_id: 66 }).then(res => {
             this.detailData = res.responseObject.details.map((d, i)=> {
+              d.quantity = d.quantity.toFixed(2)
               d.price = d.price.toFixed(2)
               d.deduction_amount = d.deduction_amount.toFixed(2)
               d.remark = d.remark

@@ -440,7 +440,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/equipmentMobilization/roadTransportNew' || from.path === '/equipmentMobilization/roadTransportEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

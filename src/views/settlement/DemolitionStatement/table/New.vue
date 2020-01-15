@@ -167,7 +167,9 @@
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
             :key="col"
+            :read-only="col === 'contract_code'"
             :maxlength="128"
+            :class="col + record.order_number"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -179,6 +181,7 @@
           />
           <a-select
             :key="col"
+            :class="col + record.order_number"
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
@@ -193,6 +196,7 @@
           <a-date-picker
             :key="col"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
@@ -202,12 +206,14 @@
             show-time
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
           <a-input-number
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :min="0"
@@ -1056,6 +1062,10 @@ export default {
         amount: '',
         tax_rate: '',
         tax_amount: '',
+        other_fees: '',
+        other_fees_cost: '',
+        deductions_money: '',
+        deductions_money_cost: '',
         settlement_amount_excluding_tax: '',
         settlement_amount_tax: '',
         contract_add_amount_without_tax: '',
@@ -1087,17 +1097,17 @@ export default {
       const arr = ['price', 'amount', 'tax_amount', 'other_fees', 'deductions_money', 'settlement_amount_excluding_tax', 'settlement_amount_tax', 'contract_add_amount_without_tax', 'contract_add_amount']
       const newData = this.detailData.filter(item => item.key !== key)
 
-      this.detailData = newData
       arr.map(x => {
-        this.detailData.forEach((d, i) => {
+        newData.forEach((d, i) => {
           if (d.order_number === '合计') {
             d[x] = this.data_sum(x)
-          }
-          if (d.order_number !== '合计') {
+          } else {
             d.order_number = i + 1
           }
         })
       })
+
+      this.detailData = newData.length === 1 ? [] : newData
     },
     toggle (key) {
       const target = this.data.filter(item => item.key === key)[0]
@@ -1146,7 +1156,7 @@ export default {
           //     return total + Number(d.amount)
           //   }, 0)
           // })
-          const arr = ['price', 'amount', 'tax_amount', 'other_fees', 'deductions_money','settlement_amount_excluding_tax', 'settlement_amount', 'contract_add_amount_without_tax', 'contract_add_amount']
+          const arr = ['price', 'amount', 'tax_amount', 'other_fees', 'deductions_money', 'settlement_amount_excluding_tax', 'settlement_amount', 'contract_add_amount_without_tax', 'contract_add_amount']
           arr.map(x => {
             newData.forEach(d => {
               if (d.order_number === '合计') {
@@ -1208,7 +1218,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1216,15 +1226,24 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

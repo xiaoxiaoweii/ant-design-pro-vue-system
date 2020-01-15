@@ -357,6 +357,7 @@
             <a-input
               read-only
               :key="col"
+              :class="'h' + col + record.code"
               :maxlength="128"
               v-if="record.editable && inputFields.includes(col) && col === 'use_org'"
               style="margin: -5px 0"
@@ -368,6 +369,7 @@
             <a-input
               read-only
               :key="col"
+              :class="'h' + col + record.code"
               :maxlength="128"
               v-else-if="record.editable && inputFields.includes(col) && col === 'use_site'"
               style="margin: -5px 0"
@@ -378,6 +380,7 @@
             />
             <a-input
               :key="col"
+              :class="'h' +  col + record.code"
               :maxlength="128"
               v-else-if="record.editable && inputFields.includes(col)"
               style="margin: -5px 0"
@@ -401,12 +404,14 @@
             <a-date-picker
               :key="col"
               :value="text"
+              :class="'h' + col + record.code"
               :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
               v-else-if="record.editable && datePickerFields.includes(col)"
               @change="value => handleChange2(value, record, col)"
             />
             <a-input-number
               :key="col"
+              :class="'h' +  col + record.code"
               :max="col === 'electric_meter_number' ? 9999999999999999999.9999 : 999999999"
               :value="text"
               :min="0"
@@ -437,6 +442,7 @@
             :key="col"
             v-if="record.editable && inputFields.includes(col)  && col !== 'use_site'"
             :maxlength="128"
+              :class="col + record.code"
             style="margin: -5px 0"
             :value="text"
             :placeholder="col === 'remark' ? '备注' :(ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col])"
@@ -444,6 +450,7 @@
           />
           <a-input
             read-only
+              :class="col + record.code"
             :key="col"
             v-else-if="record.editable && popFields.includes(col)"
             style="margin: -5px 0"
@@ -454,6 +461,7 @@
           />
           <a-input
             read-only
+              :class="col + record.code"
             :key="col"
             :maxlength="128"
             v-else-if="record.editable && inputFields.includes(col) && col === 'use_site'"
@@ -478,6 +486,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+              :class="col + record.code"
             :value="text"
             :placeholder="ipValue === '水力' ? columnsTitle2[col] : columnsTitle1[col]"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -485,6 +494,7 @@
           />
           <a-input-number
             :key="col"
+              :class="col + record.code"
             :value="text"
             :max="col === 'electric_meter_number' ? 9999999999999999999.9999 : 999999999"
             :min="0"
@@ -615,6 +625,7 @@
         bordered
         :columns="columns_result"
         :dataSource="result_detailData"
+        :rowClassName="setRowClassName"
         :pagination="false"
         :loading="memberLoading"
         rowKey="key"
@@ -821,6 +832,7 @@ import { getCondInfo } from '@/api/common.js'
 import { handlePurchase, queryone, getQueryResult, getQuerySource, getQueryCheckItem } from '@/api/equipmentMobilization/facilityAcceptance'
 import { uploadUrl, modules, model, getAttachments, downloadAttachment, delAttachment, formStatus, queryAllContract, queryAllEquipment, queryByEquipment } from '@/api/equipmentMobilization/upload'
 import { mapGetters } from 'vuex'
+import { queryDictionaries } from '@/api/dictionary'
 import wbsModal from '@/views/equipmentMobilization/modules/wbs'
 import subModal from '@/views/equipmentMobilization/modules/sub'
 const FileSaver = require('file-saver')
@@ -1817,6 +1829,10 @@ export default {
       })
     },
 
+
+    setRowClassName () {
+      return 'setRowClassName'
+    },
     // 分包商
     showUseModal (record) {
       console.log(1, record)
@@ -2080,12 +2096,13 @@ export default {
       queryDictionaries({ dic_type_id: 1015 }).then(res => {
         this.queryLevel = res.responseList
       })
-      
+
       if (data.id) {
         await queryone({ id: data.id, menu_id: 35 }).then(res => {
           this.number = true
           data = res.responseObject
           this.handleChangeValue(data.install_project)
+          if (data.install_project === '水力') res.responseObject.details = res.responseObject.details1
           const formData = pick(data, ['serial_number', 'pro_unit', 'creator_user_name', 'create_date', 'check_org', 'contract_num', 'install_org', 'fee_with_tax', 'check_date', 'install_project', 'install_person', 'check_person', 'check_result', 'check_remark'])
           formData.create_date = moment(data.create_date)
           formData.check_date = moment(data.check_date)
@@ -2214,16 +2231,17 @@ export default {
       const data2 = {
         key: length === 0 ? '1' : (parseInt(this.detailData[length - 1].key) + 1).toString(),
         code: length + 1,
+        source: '',
         name: '',
         spec: '',
+        num: '',
+        initial_number: '',
+        multiplying_power: '',
         use_site: '',
         use_org: '',
         remark: '',
         electric_meter_number: 1,
-        num: '',
-        multiplying_power: '',
         product_org: '',
-        source: '',
         waterElectricityDetails: [
           {
             key: '1',
@@ -2232,10 +2250,11 @@ export default {
             name: '',
             spec: '',
             initial_number: '',
+            multiplying_power: '',
+            num: '',
             use_site: '',
             use_org: '',
             remark: '',
-            num: '',
             editable: true,
             isNew: true
           }
@@ -2400,15 +2419,23 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.code !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'use_org' && !break1 && key != 'remark') {
                   (this.ipValue === '水力' ? this.columns2 : this.columns1).map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  console.log(key, '提交')
+                  if (document.querySelector(`.${keyname + d.code} input`)) {
+                    document.querySelector(`.${keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${keyname + d.code}`)) {
+                    document.querySelector(`.${keyname + d.code}`).focus()
+                  }
                   this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.code}行：${colname}不能为空`
@@ -2417,14 +2444,21 @@ export default {
                   return
                 }
               } else {
-                if (!break1) [
+                if (!break1) {
                   d.waterElectricityDetails.forEach(c => {
                     for (let k in c) {
                       if (!c[k] && c[k] !== 0 && k !== 'remark' && k !== 'aaaaa') {
                         this.columnsSon.forEach(item => {
-                          if (item.dataIndex == k) colname = item.title
-                        })
-                        console.log(colname)
+                          if (item.dataIndex == k) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
+                  })
+                  if (document.querySelector(`.${'h' +   keyname + d.code} input`)) {
+                    document.querySelector(`.${'h' +  keyname + d.code} input`).focus()
+                  } else if (document.querySelector(`.${'h' +  keyname + d.code}`)) {
+                    document.querySelector(`.${'h' +  keyname + d.code}`).focus()
+                  }
                         this.$notification['warn']({
                           message: '提示',
                           description: `提交时第${d.code}行下第${c.code}行：${colname}不能为空`
@@ -2434,7 +2468,7 @@ export default {
                       }
                     }
                   })
-                ]
+                }
               }
             }
           }
@@ -2660,5 +2694,13 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 </style>

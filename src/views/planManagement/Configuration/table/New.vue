@@ -166,7 +166,7 @@
           <a-input-number
             :key="col"
             :value="text"
-            :min="1 "
+            :min="0.00001"
             :precision="5"
             :max="999999999"
             :placeholder="columnsTitle[i]"
@@ -1650,9 +1650,7 @@ export default {
             }
 
             values.details = that.detailData.map(x => {
-              // for (let i in x) {
-              //     if (x[i]==''||x[i]==undefined) delete x[i]
-              // }
+              
               return x
             })
             values.files = that.fileList.map(x => {
@@ -1688,6 +1686,7 @@ export default {
               }
               let break1 = false
               let colname = ''
+              let keyname = ''
               values.details.map((d, i) => {
                 for (var key in d) {
                   if (d[key] == null || d[key] == '') {

@@ -440,7 +440,7 @@ export default {
   },
   watch: {
     $route (to, from) {
-      if (from.path === '/settlement/apitalMaterialNew' || from.path === '/settlement/apitalMaterialEdit') {
+      if (from.path !== this.$route.fullPath) {
         this.refresh(true)
       }
     }

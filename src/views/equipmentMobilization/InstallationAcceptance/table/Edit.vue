@@ -402,6 +402,7 @@
     <a-card class="card" title="验收内容">
       <a-table
         :columns="columns"
+          :rowClassName="setRowClassName"
         :dataSource="detailData"
         :pagination="false"
         :loading="memberLoading"
@@ -1421,6 +1422,9 @@ export default {
       // 清空了过滤内容
       this.filteredInfo = null
     },
+    setRowClassName(){
+      return 'setRowClassName'
+    },
 
     handleCancel () {
       this.visible = false
@@ -1494,8 +1498,8 @@ export default {
       queryAllName().then(res => (this.name_dicTree = [res.responseObject]))
       queryDictionaries({ dic_type_id: 1012 }).then(res => {
         this.queryLevel = res.responseList.map(x => {
-          x.label = x.dic_type_name
-          x.value = x.dic_type_name
+          x.label = x.dic_enum_name
+          x.value = x.dic_enum_name
           return x
         })
       })
@@ -1849,5 +1853,13 @@ export default {
     color: rgba(0, 0, 0, 0.45);
     font-size: 12px;
   }
+}
+
+// 去掉表格高亮
+.setRowClassName {
+  background-color: #fff;
+}
+/deep/ .ant-table-tbody > .setRowClassName:hover > td {
+  background-color: #fff;
 }
 </style>

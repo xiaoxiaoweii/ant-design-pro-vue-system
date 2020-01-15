@@ -393,10 +393,18 @@ export default {
       // details table
       detailData: [],
       columnsTitle: [
-        '费用项名称','计费单位(车/辆)','数量','不含税单价','税率(%)','不含税金额',
-        '税额','含税金额(元)','备注'  
+        '费用项名称','计费单位(车/辆)','数量','不含税单价','税率(%)','不含税总额',
+        '税额','含税总额(元)','备注'  
         ],
       columns: [
+        {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
         {
           title: '费用项名称',
           dataIndex: 'fee_item',
@@ -683,8 +691,8 @@ export default {
         await queryone({ id: data.id, menu_id: 94 }).then(res => {
           // this.noted = this.dataObj.noted
           this.dataObj = res.responseObject
-          this.detailData = res.responseObject.details.map(d => {
-         
+          this.detailData = res.responseObject.details.map((d,i) => {
+            d.code =i+1
             if (d.number===0) d.number = ''
             d.key = d.id
 

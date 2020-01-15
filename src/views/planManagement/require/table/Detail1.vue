@@ -354,6 +354,14 @@ export default {
       ],
       columns: [
         {
+          title: '序号',
+          dataIndex: 'code',
+          key: 'code',
+          width: 50,
+          align: 'center',
+          scopedSlots: { customRender: 'code' }
+        },
+        {
           title: '机械设备名称',
           dataIndex: 'equipment_name',
           key: 'equipment_name',
@@ -373,6 +381,7 @@ export default {
           title: '单位',
           dataIndex: 'equipment_unit',
           width: '80px',
+          align: 'center',
           key: 'equipment_unit',
           scopedSlots: { customRender: 'equipment_unit' }
         },
@@ -691,10 +700,11 @@ export default {
       if (data.id) {
         await queryone({ id: data.id, menu_id: 15 }).then(res => {
           // this.noted = this.dataObj.noted
-          this.detailData = res.responseObject.details.map(d => {
+          this.detailData = res.responseObject.details.map((d,i) => {
             // d.editable = true
             // d.isNew = true
-           if (d.number==0) d.number=''
+            d.code = i+1  
+            if (d.number==0) d.number=''
             d.key = d.id
             if(d.approved_alloc_num==null) d.approved_alloc_num = 0
             if(d.approved_purchase_num==null) d.approved_purchase_num = 0

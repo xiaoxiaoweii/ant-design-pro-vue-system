@@ -154,6 +154,7 @@
             :maxlength="128"
             v-if="record.editable && inputFields.includes(col)"
             style="margin: -5px 0"
+            :class="col + record.order_number"
             :value="text"
             :placeholder="columnTitle[i]"
             @click="() => {
@@ -166,6 +167,7 @@
             v-else-if="record.editable && selectFields.includes(col)"
             style="margin: -5px 0"
             :value="text"
+            :class="col + record.order_number"
             :placeholder="columnTitle[i]"
             @change="value => handleChange(value, record.key, col)"
           >
@@ -177,6 +179,7 @@
           </a-select>
           <a-date-picker
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             :placeholder="columnTitle[i]"
             v-else-if="record.editable && datePickerFields.includes(col)"
@@ -187,12 +190,14 @@
             show-time
             format="YYYY-MM-DD HH:mm:ss"
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             v-else-if="record.editable && rangePickerFields.includes(col)"
             @change="value => handleChange(value, record.key, col)"
           />
           <a-input-number
             :key="col"
+            :class="col + record.order_number"
             :value="text"
             :max="col === 'amount' ? 999999999 : 999999999.99"
             :min="0"
@@ -1014,7 +1019,7 @@ export default {
       let num = 0
       this.detailData.forEach(x => {
         if (x.order_number !== '合计') {
-          num += parseInt(x[attr] * 100)
+          num += parseInt((x[attr] || 0) * 100)
         }
       })
       return num / 100
@@ -1051,47 +1056,26 @@ export default {
         target[column] = value
 
         if (['quantity', 'price', 'amortization_period', 'months_amortized'].includes(column)) {
-          // if (target.price) {
           if (target.amortization_period && target.months_amortized) {
             target.months_amortized = target.amortization_period > target.months_amortized ? target.months_amortized : target.amortization_period
           }
+          const price = target.price || 0
+          const quantity = target.quantity || 0
+          const amortization_period = target.amortization_period || 0
+          const months_amortized = target.months_amortized || 0
 
-          if (!target.quantity && target.quantity !== 0) {
-            target.quantity = 0
-            target.original_value = 0
-            target.net_value = 0
-            target.amortized_amount = 0
-            target.month_amortized_amount = 0
-          }
-
-          if (!target.amortization_period && target.amortization_period !== 0) {
-            target.amortization_period = 0
-            target.month_amortized_amount = 0
-            target.amortized_amount = 0
-          }
-
-          if (!target.months_amortized && target.months_amortized !== 0) {
-            target.months_amortized = 0
-            target.amortized_amount = 0
-            target.net_value = 0
-          }
-
-          // if ((target.quantity && target.quantity) || target.quantity === 0 || target.quantity === 0) {
           // 原值
-          target.original_value = parseInt(target.price * target.quantity * 100) / 100
-          // }
+          target.original_value = parseInt(price * quantity * 100) / 100 || ''
 
-          if (target.price && target.quantity && target.amortization_period) {
+          if (target.original_value && amortization_period) {
             // 本月摊销金额
-            target.month_amortized_amount = parseInt(target.price * target.quantity / target.amortization_period * 100) / 100
-          }
+            target.month_amortized_amount = parseInt(target.original_value / amortization_period * 100) / 100
 
-          if (target.price && target.quantity && target.amortization_period && target.months_amortized) {
             // 已摊销金额
-            target.amortized_amount = parseInt(target.price * target.quantity / target.amortization_period * target.months_amortized * 100) / 100
+            target.amortized_amount = parseInt(target.month_amortized_amount * months_amortized * 100) / 100
 
             // 净值
-            target.net_value = parseInt((target.price * target.quantity - target.amortized_amount) * 100) / 100
+            target.net_value = parseInt((target.original_value - target.amortized_amount) * 100) / 100
           }
 
           const arr = ['amortization_period', 'price', 'quantity', 'original_value', 'month_amortized_amount', 'months_amortized', 'amortized_amount', 'net_value']
@@ -1156,7 +1140,7 @@ export default {
         this.isrequired = false
       } else {
         if (this.detailData.length === 0) {
-          this.$notification['error']({
+          this.$notification['warn']({
             message: '提示',
             description: '提交时明细不能为空'
           })
@@ -1164,15 +1148,24 @@ export default {
         }
         let break1 = false
         let colname = ''
+        let keyname = ''
         this.detailData.forEach((d, i) => {
           if (d.order_number !== '合计') {
             for (var key in d) {
               if (!d[key] && d[key] !== 0) {
                 if (key != 'remark' && key != 'total_original_value') {
                   this.columns.map(item => {
-                    if (item.dataIndex == key) colname = item.title
+                    if (item.dataIndex == key) {
+                      colname = item.title
+                      keyname = item.dataIndex
+                    }
                   })
-                  this.$notification['error']({
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
+                  this.$notification['warn']({
                     message: '提示',
                     description: `提交时第${d.order_number}行：${colname}不能为空`
                   })

@@ -79,10 +79,11 @@ export default {
     },
     $route(to,from) {
       if (to.path === '/planManagement/DemolitionList') {
-        if (!this.$store.state.keepaliveArr.includes('/planManagement/DemolitionList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/planManagement/DemolitionList')
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/planManagement/DemolitionList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/planManagement/DemolitionList')
       }
     }
   }

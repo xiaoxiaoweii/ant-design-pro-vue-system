@@ -86,10 +86,11 @@ export default {
     },
     $route(to, from) {
       if (to.path === '/planManagement/facitransformsList') {
-        if (!this.$store.state.keepaliveArr.includes('/planManagement/facitransformsList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/planManagement/facitransformsList')
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/planManagement/facitransformsList')) {
+        //   this.reload()
+        // }
+        // this.$store.state.keepaliveArr.push('/planManagement/facitransformsList')
       }
     }
 

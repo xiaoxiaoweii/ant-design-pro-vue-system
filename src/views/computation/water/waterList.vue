@@ -4,6 +4,7 @@
     :bodyStyle="currentComponet === 'Edit' ? bodyStyle : {}"
   >
     <component
+    v-if="isRouterAlive"
       @onEdit="handleEdit"
       @onGoBack="handleGoBack"
       @onDetail="handleDetail"
@@ -24,7 +25,7 @@ import Edit from '@/views/computation/water/table/Edit'
 import Read from '@/views/computation/water/table/Read'
 import Detail from '@/views/computation/water/table/Detail'
 export default {
-  name: ' waterList ',
+  name: 'waterList',
   components: {
     AInput,
     ATextarea,
@@ -35,6 +36,7 @@ export default {
   },
   data () {
     return {
+      isRouterAlive:true,
       currentComponet: 'List',
       record: '',
       bodyStyle: {
@@ -46,21 +48,32 @@ export default {
   created () {
 
   },
+  provide () {
+    return {
+      reload: this.reload
+    }
+  },
   methods: {
+    reload() {
+      this.isRouterAlive = false
+      this.$nextTick(function() {
+        this.isRouterAlive = true
+      })
+    },
     handleEdit (record) {
       this.record = record || ''
       this.currentComponet = 'Edit'
-      console.log(record)
+      // console.log(record)
     },
     handleDetail (record) {
       this.record = record || ''
       this.currentComponet = 'Detail'
-      console.log(record)
+      // console.log(record)
     },
     handleRead (record) {
       this.record = record || ''
       this.currentComponet = 'Read'
-      console.log(record)
+      // console.log(record)
     },
     handleGoBack () {
       this.record = ''
@@ -73,11 +86,14 @@ export default {
        this.reload()}
     },
     $route(to, from) {
-      if (to.path === '/computation/water/waterList') {
-        if (!this.$store.state.keepaliveArr.includes('/computation/water/waterList')) {
-          this.reload()
-        }
-        this.$store.state.keepaliveArr.push('/computation/water/waterList')
+      if (to.path === '/computation/waterList') {
+        this.reload()
+        // if (!this.$store.state.keepaliveArr.includes('/computation/waterList')) {
+        //   console.log('=======222222')
+        //   this.reload()
+        // }
+        // console.log('=======33333')
+        // this.$store.state.keepaliveArr.push('/computation/waterList')
       }
     }
 

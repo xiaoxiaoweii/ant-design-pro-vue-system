@@ -78,6 +78,7 @@
         rowKey="id"
         bordered
         :columns="equip_data"
+        :customRow="dbClick"
         :data="loadTable"
         :alert="false"
         :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange, type: 'radio'}"
@@ -143,6 +144,7 @@
       >
         <template v-for="(col, i) in detailFields" :slot="col" slot-scope="text, record">
           <a-input
+            :class="col+record.order_number"
             :key="col"
             maxlengh="128"
             :placeholder="columnTitle[i]"
@@ -153,6 +155,7 @@
             @click="e => onClick(e.target.value, record.order_number, col)"
           />
           <a-date-picker
+            :class="col+record.order_number"
             :key="col"
             :value="text"
             format="YYYY-MM-DD"
@@ -710,6 +713,17 @@ export default {
       this.visible_name = true
       this.$refs.Mtables && this.$refs.Mtables.refresh(true)
     },
+    // 双击确定
+    dbClick (record) {
+      return {
+        on: {
+          dblclick: (e) => {
+            this.selectedRowKeys[0]=record.id
+            this.handleName(this.selectedRowKeys)
+          }
+        }
+      }
+    },
     handleName (val) {
       this.visible_name = false
       const arr = this.EquipData.responsePageInfo.list.filter(item =>item.id === val[0])
@@ -819,6 +833,7 @@ export default {
           values.details = that.detailData
           if(type==='submit'){
             let colname=''
+            let keyname=''
             let break1=false
             values.details.map((d,i)=>{
               for(var key in d){
@@ -826,8 +841,14 @@ export default {
                   that.detailColumns.map((item)=>{
                     if(item.dataIndex==key){
                       colname=item.title
-                    }
+                      keyname=item.dataIndex
+                    }                 
                   })
+                  if (document.querySelector(`.${keyname + d.order_number} input`)) {
+                    document.querySelector(`.${keyname + d.order_number} input`).focus()
+                  } else {
+                    document.querySelector(`.${keyname + d.order_number}`).focus()
+                  }
                   that.$notification['warning']({
                     message:"提示",
                     description:`提交时第${i+1}行：${colname}不能为空`
@@ -835,7 +856,10 @@ export default {
                   break1=true
                   return 
                 }
-              }
+                if(break1){
+                  return
+                }
+              } 
             })
             if(break1) return
           }
